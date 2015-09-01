@@ -42,7 +42,6 @@ public class Booking {
     public boolean getLuggageSupp() { return this.luggageSupplement; }
     public boolean getMagazinesSupp() { return this.magazinesSupplement; }
     public double getDiscount() { return this.discount; }
-    
     private void setPersona(Persona p) {
         this.per = p;
     }
