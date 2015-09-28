@@ -5,6 +5,9 @@
  */
 package univair.Entity;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 /**
  *
  * @author Michele
@@ -13,8 +16,8 @@ public class Booking {
     
     public Booking() {};
     public Booking(Persona p, Flight f, String c, 
-                   double prc, boolean red, boolean meal, 
-                   boolean pet, boolean lug, boolean mgzn, double dis) {
+                   boolean red, boolean meal, boolean pet, 
+                   boolean lug, boolean mgzn, double dis) {
         
         if(!controlClass(c)) { throw new IllegalArgumentException("Classe non valida, deve essere 'first' o 'second'"); }
         else if((dis < 0 && dis > 99)) { throw new IllegalArgumentException("Valore di sconto non valido, deve essere compreso tra 0 e 99"); }
@@ -28,7 +31,7 @@ public class Booking {
             this.luggageSupplement = lug;
             this.magazinesSupplement = mgzn;
             this.discount = dis; // percentuale
-            
+            double prc = computePrice(f);
             this.price = prc*(1-(dis/100));  // prezzo già scontato
         }
     }
@@ -78,27 +81,42 @@ public class Booking {
         this.price = (double) Math.round(newPrc * 100) / 100;   // arrotondamento alla seconda cifra decimale
     }
     /* metodi di classe */
-    private static boolean controlClass(String c) {
+    private boolean controlClass(String c) {
         return (c.toLowerCase().equals("first") || c.toLowerCase().equals("second"));
+    }   
+    public double computePrice(Flight f) {
+        String dep = f.getRoute().getDeparture();
+        String des = f.getRoute().getDestination();
+        double lat1 = City.valueOf(dep).lat();
+        double lon1 = City.valueOf(dep).lon();
+        double lat2 = City.valueOf(des).lat();
+        double lon2 = City.valueOf(des).lon();
+        
+        double dis = distance(lat1, lon1, lat2, lon2);
+        double prc = dis/12.5;
+        prc = arrotonda(prc);
+        return prc;
     }
-    
-    
-    private static double computePrice(Flight f) {
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        return 0;
+    private static double distance(double lat1, double lon1, double lat2, double lon2) {
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515 * 1.609344;
+        return dist;      
     }
-    
-    
-    
-    
+    private static double deg2rad(double deg) {
+            return (deg * Math.PI / 180.0);
+    }
+    private static double rad2deg(double rad) {
+            return (rad * 180 / Math.PI);
+    }
+    private static double arrotonda(double x) {
+        DecimalFormat df = new DecimalFormat("#####.00");
+        df.setRoundingMode(RoundingMode.CEILING);    
+        double newValue = Double.parseDouble(df.format(x).replace(',','.'));
+        return newValue;
+    }  
     /* attributi */
     private Persona per;
     private Flight fl;

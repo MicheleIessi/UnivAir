@@ -38,7 +38,7 @@ public class Route {
     }
     /* metodi di controllo */
     public static boolean controlCity(String city) {
-        for(Cities c : Cities.values()) {
+        for(City c : City.values()) {
             if (c.toString().equals(city))
                 return true;
         }

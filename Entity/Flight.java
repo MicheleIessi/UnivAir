@@ -5,6 +5,8 @@
  */
 package univair.Entity;
 
+import java.util.GregorianCalendar;
+
 /**
  *
  * @author Michele
@@ -12,24 +14,29 @@ package univair.Entity;
 public class Flight {
     /* costruttori */
     public Flight() {};
-    public Flight(Route r, String id, Employer[] e, int s) {
+    public Flight(Route r, String id, Employer[] e, int s, GregorianCalendar d) {
         controlCrew(e);
         this.route = r;
         this.ID = id;
         this.crew = e;
         this.seats = s;
-        System.out.println("Volo creato: ID: " + id + ", Tratta: " + r.getDeparture() + " - " + r.getDestination() + ", posti: " + s);
+        this.date = d;
+        System.out.println("Volo creato: ID: " + id + ", Tratta: " + r.getDeparture() + " - " + r.getDestination() + ", posti: " + s + ", data: " + this.getDateString());
     }
     /* getter & setter */
     public Route getRoute()     { return this.route; }
     public String getID()       { return this.ID; }
     public Employer[] getCrew() { return this.crew; }
     public int getSeats()       { return this.seats; }
+    public GregorianCalendar getDate()       { return this.date; }
     public void setRoute(Route r)     { this.route = r; }
     public void setID(String id)      { this.ID = id; }
     public void setCrew(Employer[] e) { this.crew = e; }
     public void setSeats(int s)       { this.seats = s; }
+    public void setDate(GregorianCalendar d)       { this.date = d; }
     /* metodi di classe */
+    public String getDateString() {
+        return (this.date.get(1)+1900) + "-" + (this.date.get(2)+1) + "-" + this.date.get(5);    }
     public void setPilot(Employer e)   { this.crew[0] = e; }
     public void setCopilot(Employer e) { this.crew[1] = e; }
     public void setHost1(Employer e)   { this.crew[2] = e; }
@@ -48,4 +55,5 @@ public class Flight {
     private String ID;
     private Employer[] crew;
     private int seats;
+    private GregorianCalendar date;
 }

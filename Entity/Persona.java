@@ -14,7 +14,7 @@ public class Persona {
     /* costruttori */
     public Persona() {};
     public Persona(String n, String c, Date d, String s, String cf, String e, String ln, Address lr) {
-        if(controlField(n, "alpha") && controlField(c, "alpha") && controlField(s, "sex") && cf.length()!=16 && controlField(ln, "alpha")) {
+        if(controlField(n, "alpha") && controlField(c, "alpha") && controlField(s, "sex") && cf.length()==16 && controlField(ln, "alpha")) {
             this.nome = n;
             this.cognome = c;
             this.ddn = d;
@@ -50,21 +50,22 @@ public class Persona {
         if(tipo.equals("alpha")) {
             for(int i = 0; i < c.length; i++) {
                 if(Character.isDigit(c[i])) {
-                    esito = false;
+                    throw new IllegalArgumentException("Nome, cognome o luogo di nascita errati.");
                 }
+                 
             }
         }
         if(tipo.equals("digit")) {
             for(int i = 0; i < c.length; i++) {
                 if(!Character.isDigit(c[i])) {
-                    esito = false;
+                    throw new IllegalArgumentException("Valori numerici errati");
                 }
             }
         }
         if(tipo.equals("sex")) {
-            if(c.length!=1 || c[0] != 'm' || c[0] != 'f' || c[0] != 'M' || c[0] != 'F') {
-                esito = false;
-            }
+            if(c.length != 1 || (c[0] != 'm' && c[0] != 'f' && c[0] != 'M' && c[0] != 'F')) {
+                throw new IllegalArgumentException("Sesso non valido");
+            } 
         }
         return esito;
     }
