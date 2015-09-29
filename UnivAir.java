@@ -5,8 +5,11 @@
  */
 package univair;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
 import univair.Entity.Address;
 import univair.Entity.Booking;
 import univair.Entity.City;
@@ -14,6 +17,7 @@ import univair.Entity.Employer;
 import univair.Entity.Flight;
 import univair.Entity.Persona;
 import univair.Entity.Route;
+import univair.Foundation.FConnect;
 
 /**
  *
@@ -24,14 +28,14 @@ public class UnivAir {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         Address a = new Address("Casacanditella","Madonna", "184", "66010", "CH");
         Persona p = new Persona("michele", "iessi", new Date(92,10,6), "m", "SSIMHL92S06E243D", "iessimichele@gmail.com", "guardiagrele", a);
         Employer e1 = new Employer("123", "Pilot");
         Employer e2 = new Employer("124", "Copilot");
         Employer e3 = new Employer("456", "Hostess");
         Employer e4 = new Employer("164", "Hostess");
-        Employer e5 = new Employer("735", "Hostess");
+        Employer e5 = new Employer("735", "Hostess");new Employer("123", "Pilot");
         Employer[] e = new Employer[] {e1,e2,e3,e4,e5};
     //    e[0] = e1; 
     //    e[1] = e2;
@@ -47,7 +51,16 @@ public class UnivAir {
         Booking boo = new Booking(p, f1, "first", true, true, true, true, true, 1);
         
         System.out.println(boo.computePrice(f1));
-    
+        
+        FConnect con = new FConnect();
+        Route madpar = new Route("Madrid","Parigi");
+        Route dummy = new Route();
+        List<Map<String, String>> l = dummy.retrieve(14);
+        String des = l.get(0).get("destination").trim();
+        String dep = l.get(0).get("departure").trim();
+        Route prova = new Route(dep,des);
+        
+        System.out.println(prova.toString());
     }
     
 }

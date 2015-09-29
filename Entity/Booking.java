@@ -94,6 +94,12 @@ public class Booking {
         
         double dis = distance(lat1, lon1, lat2, lon2);
         double prc = dis/12.5;
+        if(this.clss.equals("first")) prc +=50;
+        if(this.luggageSupplement) prc += 20;
+        if(this.mealSupplement) prc += 15;
+        if(this.petSupplement) prc += 20;
+        if(this.magazinesSupplement) prc += 10;
+        if(this.priceReduction) prc *= 0.5;
         prc = arrotonda(prc);
         return prc;
     }
@@ -128,5 +134,4 @@ public class Booking {
     private boolean luggageSupplement;
     private boolean magazinesSupplement;
     private double discount;
-
 }
