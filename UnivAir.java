@@ -29,8 +29,6 @@ public class UnivAir {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws SQLException {
-        Address a = new Address("Casacanditella","Madonna", "184", "66010", "CH");
-        Persona p = new Persona("michele", "iessi", new Date(92,10,6), "m", "SSIMHL92S06E243D", "iessimichele@gmail.com", "guardiagrele", a);
         Employer e1 = new Employer("123", "Pilot");
         Employer e2 = new Employer("124", "Copilot");
         Employer e3 = new Employer("456", "Hostess");
@@ -47,10 +45,6 @@ public class UnivAir {
         Route AmsMad = new Route("Amsterdam", "Roma");
         Flight f1 = new Flight(AmsMad, "00123", e, 169, new GregorianCalendar(115,10,6));
         System.out.println(City.Amsterdam.lat());
-
-        Booking boo = new Booking(p, f1, "first", true, true, true, true, true, 1);
-        
-        System.out.println(boo.computePrice(f1));
         
         FConnect con = new FConnect();
         Route madpar = new Route("Madrid","Parigi");
