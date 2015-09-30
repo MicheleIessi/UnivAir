@@ -5,13 +5,17 @@
  */
 package univair.Entity;
 
+import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import univair.Foundation.FConnect;
 
 /**
  *
  * @author Michele
  */
-public class Employer extends Persona {
+public class Employer extends Persona implements DBInterface {
     /* costruttori */
     public Employer() {};
     public Employer(String id, String ty) {
@@ -50,6 +54,16 @@ public class Employer extends Persona {
         
         
         
+    }
+    /* metodi per il DB */
+    @Override
+    public void createFromDB(int id) throws SQLException {
+        
+    }
+    @Override
+    public Map retrieve(int id) throws SQLException {
+        FConnect con = new FConnect();
+        Map<String,Object> map = new HashMap<>();
     }
     /* attributi */
     private String ID;

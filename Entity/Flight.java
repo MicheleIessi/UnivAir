@@ -5,7 +5,12 @@
  */
 package univair.Entity;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
+import univair.Foundation.FConnect;
 
 /**
  *
@@ -50,10 +55,57 @@ public class Flight {
         if(!e[3].type.equals("Hostess")) throw new IllegalArgumentException("Errore, hostess 2 mancante");
         if(!e[4].type.equals("Hostess")) throw new IllegalArgumentException("Errore, hostess 3 mancante");
     }
+    /* metodi per il DB */
+    private GregorianCalendar getDateFromString(String date) {
+        int year = Integer.parseInt(date.substring(0, 4))-1900;
+        int month = Integer.parseInt(date.substring(5, 7))-1;
+        int day = Integer.parseInt(date.substring(8, 10));
+        return new GregorianCalendar(year, month, day);
+    }
+    private String getStringFromDate(GregorianCalendar gc) {
+        String dat = (gc.get(1)+1900) + "-" + (gc.get(2)+1) + "-" + gc.get(5);
+        return dat;
+    }
+
+    public void createFromDB(int id, GregorianCalendar gc) {
+        
+    }
+    public Employer[] getEmployersFromDB(int id, GregorianCalendar gc) throws SQLException {
+        FConnect con = new FConnect();
+        String[] keys = {"idvolo","decollovolo"};
+        String dat = getStringFromDate(gc);
+        String[] conds = {Integer.toString(id),dat};
+        ResultSet rs = con.search("lavoripassati", keys, conds);
+        String e1 = rs.getString(3);
+        String e2 = rs.getString(4);
+        String e3 = rs.getString(5);
+        String e4 = rs.getString(6);
+        String e5 = rs.getString(7);
+        Employer pilot = new Employer();
+        pilot.createFromDB(Integer.parseInt(e1));
+    }
+    public Map retrieve(int id, GregorianCalendar gc) throws SQLException {
+        FConnect con = new FConnect();
+        ResultSet rs = con.search(table, key, cond);
+        Map<String,Object> map = new HashMap<>();
+        while(rs.next()) {
+            map = new HashMap<>();
+            Route r = new Route();
+            r.createFromDB(id);
+            map.put("route", r);
+            map.put("ID", rs.getInt(1));
+            map.put("date", getDateFromString(rs.getString(2)));
+            map.put("crew","crew da inserire");
+        }
+    }
     /* attributi */
     private Route route;
     private String ID;
     private Employer[] crew;
     private int seats;
     private GregorianCalendar date;
+    /* attributi per il db */
+    private static final String table = "volo";
+    private static final String[] key = {"id","decollo"};
+    private static final String[] cond = {"id = ","decollo = "};
 }

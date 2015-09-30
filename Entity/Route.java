@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import univair.Foundation.FConnect;
 
@@ -18,7 +17,7 @@ import univair.Foundation.FConnect;
  *
  * @author Michele
  */
-public class Route {
+public class Route implements DBInterface {
     /* costruttori */
     public Route() {};
     public Route(String dep, String des) {
@@ -53,30 +52,40 @@ public class Route {
         return false;
     }
     /* metodi per il DB */
+    @Override
+    public void createFromDB(int id) throws SQLException {
+        Map<String,String> map = retrieve(id);
+        String dep = map.get("departure").trim();
+        String des = map.get("destination").trim();
+        this.setDeparture(dep);
+        this.setDestination(des);
+    }
+    @Override
     public void store(int id) throws SQLException{
         ArrayList<String> values = new ArrayList<>();
         FConnect con = new FConnect();
-        con.exists(this.table, this.key, Integer.toString(id));
+        con.exists(table, key, Integer.toString(id));
         values.add(Integer.toString(id));
         values.add(this.departure);
         values.add(this.destination);
-        con.store(this.table, values);  
+        con.store(table, values);  
     }
-    public List retrieve(int id) throws SQLException {
+    @Override
+    public Map retrieve(int id) throws SQLException {
         FConnect con = new FConnect();
-        ResultSet rs = con.load(this.table,condition + Integer.toString(id));
-        Map<String,String> map;
-        List<Map<String, String>> data = new ArrayList<>();
-        int i = 0;
+        ResultSet rs = con.load(table,condition + Integer.toString(id));
+        Map<String,String> map = new HashMap<>();
         while(rs.next()) {
             map = new HashMap<>();
             map.put("id", Integer.toString(rs.getInt(1)));
             map.put("departure", rs.getString(2));
             map.put("destination", rs.getString(3));
-            data.add(i, map);
-            i++;
         }
-        return data;
+        return map;
+    }
+    public static void delete(int id) throws SQLException {
+        FConnect con = new FConnect();
+        con.delete(table, key, Integer.toString(id));
     }
     /* metodi di debug */
     @Override
@@ -87,7 +96,7 @@ public class Route {
     private String departure;
     private String destination;
     /* attributi per il db */
-    private final String table = "tratta";
-    private final String key = "id";
-    private final String condition = "id = ";
+    private static final String table = "tratta";
+    private static final String key = "id";
+    private static final String condition = "id = ";
 }

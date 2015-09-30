@@ -21,14 +21,14 @@ import java.util.Map;
  * @author Michele
  */
 public class FConnect {
-    Config con = new Config();
-    Connection db;
+    static Config con = new Config();
+    static Connection db;
 
     public FConnect() throws SQLException {
         String url = "jdbc:postgresql://"+con.getHost()+":"+con.getPort()+"/"+con.getDB();
         this.db = DriverManager.getConnection(url, con.getDBUsername(), con.getDBPassword());
     }
-    public void query(String query) throws SQLException {
+    public static void query(String query) throws SQLException {
         Statement stmt = db.createStatement();
         stmt.executeUpdate(query);
         stmt.close();
@@ -51,9 +51,10 @@ public class FConnect {
             val = val + item;
         }        
         String sql = "INSERT INTO " + table + " VALUES (" + val + ");";
-        System.out.println(sql);
+        //System.out.println(sql);
         query(sql);
     }
+    
     
     public void exists(String table, String key, String value) throws SQLException {
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
@@ -65,19 +66,19 @@ public class FConnect {
     
     public ResultSet load(String table, String condition) throws SQLException {
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-        String query = "SELECT * FROM " + table + " WHERE " + condition;
-        ResultSet rs = stmt.executeQuery(query);
+        String sql = "SELECT * FROM " + table + " WHERE " + condition;
+        ResultSet rs = stmt.executeQuery(sql);
         return rs;        
     }
     
-    public ResultSet search(String table, String[] keys, String[] conditions) throws SQLException {        
+    public ResultSet search(String table, String[] keys, String[] values) throws SQLException {        
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         String cond = "";
         int i = 0;
         int len = keys.length;
         for(String key : keys) {
-            if(conditions[i] instanceof String) {
-                cond = cond + key + " = " + conditions[i];
+            if(values[i] instanceof String) {
+                cond = cond + key + " = " + values[i];
             }
             if(i < len-1) {
                 cond = cond + " AND ";
@@ -85,21 +86,14 @@ public class FConnect {
             }
         }        
         String sql = "SELECT * FROM " + table + " WHERE " + cond;  
-        System.out.println(sql);
+        //System.out.println(sql);
         ResultSet rs = stmt.executeQuery(sql);
         return rs;
     }
     
-    
-    private void resultSetToAssocArray(ResultSet rs) {
-        
-    }
-    private static boolean isInt(String s) {
-        try {
-            int i = Integer.parseInt(s);
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
-        return true;
+    public void delete(String table, String key, String value) throws SQLException {
+        Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        String sql = "DELETE FROM " + table + " WHERE " + key + " = " + value;
+        stmt.executeUpdate(sql);
     }
 }

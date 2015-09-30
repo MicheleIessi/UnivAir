@@ -17,7 +17,7 @@ import univair.Foundation.FConnect;
  *
  * @author Michele
  */
-public class Persona {
+public class Persona implements DBInterface {
     /* costruttori */
     public Persona() {};
     public Persona(String n, String c, GregorianCalendar d, String s, String cf, String e, String ln, Address lr) {
@@ -85,12 +85,39 @@ public class Persona {
         int day = Integer.parseInt(date.substring(8, 10));
         return new GregorianCalendar(year, month, day);
     }
-    public List retrieve(int id) throws SQLException {
+    @Override
+    public void createFromDB(int id) throws SQLException {
+        Map<String,Object> map = retrieve(id);
+        String nom = (String) map.get("nome");
+        String cog = (String) map.get("cognome");
+        GregorianCalendar nas = (GregorianCalendar) map.get("ddn");
+        String ses = (String) map.get("sex");
+        String cod = (String) map.get("CF");
+        String eml = (String) map.get("email");
+        String nsc = (String) map.get("ldn");
+        Address rsd = (Address) map.get("ldr");
+        this.setNome(nom.trim());
+        this.setCognome(cog.trim());
+        this.setDDN(nas);
+        this.setSec(ses.trim());
+        this.setCF(cod.trim());
+        this.SetEmail(eml.trim());
+        this.setLDN(nsc.trim());
+        this.setLDR(rsd);      
+    }
+    /**
+     * Il metodo retrieve restituisce una map contenente i dati caricati dal
+     * database. Viene usata una map poiché offre un'associazione chiave-valore.
+     * Il fatto che la ricerca è fatta su una PK garantisce sempre 0/1 riscontri.
+     * @param id - l'id (univoco) da cercare nel database
+     * @return - map, la mappa contenente i dati
+     * @throws SQLException -
+     */
+    @Override
+    public Map retrieve(int id) throws SQLException {
         FConnect con = new FConnect();
         ResultSet rs = con.load(table, condition + Integer.toString(id));
-        Map<String,Object> map;
-        List<Map<String, Object>> data = new ArrayList<>();
-        int i = 0;
+        Map<String,Object> map = new HashMap<>();
         while(rs.next()) {
             map = new HashMap<>();
             map.put("id", Integer.toString(rs.getInt(1)));
@@ -102,13 +129,12 @@ public class Persona {
             map.put("email", rs.getString(7));
             map.put("ldn", rs.getString(8));
             Address temp = new Address(rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13));
-            map.put("ldr", temp);
-            data.add(i, map);
-            i++;
+            map.put("ldr", temp);            
         }
-        return data;
+        return map;
     }
-    public void store() throws SQLException {
+    @Override
+    public void store(int id) throws SQLException {
         FConnect con = new FConnect();
         ArrayList<String> values = new ArrayList<>();
         con.exists(table, "codfis", this.CF);
@@ -128,6 +154,26 @@ public class Persona {
         values.add(this.ldr.getProv());
         con.store(table, values);
     }
+    public static void delete(int id) throws SQLException {
+        FConnect con = new FConnect();
+        con.delete(table, key, Integer.toString(id));
+    }
+    /* metodi di debug */
+    @Override
+    public String toString() {
+        return  "nome: "                + this.nome                                                                  + "; " +
+                "cognome: "             + this.cognome                                                               + "; " +
+                "data: "                + (this.ddn.get(1)+1900) + "-" + (this.ddn.get(2)+1) + "-" + this.ddn.get(5) + "; " +
+                "sesso: "               + this.sex                                                                   + "; " +
+                "CF: "                  + this.CF                                                                    + "; " +
+                "mail: "                + this.email                                                                 + "; " +
+                "città di nascita: "    + this.ldn                                                                   + "; " +
+                "città di residenza: "  + this.ldr.getCittà().trim()                                                 + "; " +
+                "via: "                 + this.ldr.getVia().trim()                                                   + "; " +
+                "numero: "              + this.ldr.getNumero().trim()                                                + "; " +
+                "cap: "                 + this.ldr.getCAP().trim()                                                   + "; " +
+                "provincia: "           + this.ldr.getProv().trim();
+    }
     /* attributi */
     protected String nome;
     protected String cognome;
@@ -138,7 +184,7 @@ public class Persona {
     protected String ldn; //luogo di nascita
     protected Address ldr;//luogo di residenza
     /* attributi per il db */
-    private final String table = "persona";
-    private final String key = "id";
-    private final String condition = "id = ";
+    private static final String table = "persona";
+    private static final String key = "id";
+    private static final String condition = "id = ";
 }
