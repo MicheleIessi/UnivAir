@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,20 +37,27 @@ public class FConnect {
     public void store(String table, ArrayList values) throws SQLException {
         int j = values.size();
         String val = "";
-        for(int i = 0; i < j; i++) {   
-            String item = "\'" + values.get(i).toString() + "\'";
+        String item = "";
+        for(int i = 0; i < j; i++) {
+            if(values.get(i).toString().equals("DEFAULT")) {
+                item = values.get(i).toString();
+            }
+            else {
+                item = "\'" + values.get(i).toString() + "\'";
+            }
             if(i < j-1) {
                 item = item + ",";
             }
             val = val + item;
         }        
         String sql = "INSERT INTO " + table + " VALUES (" + val + ");";
+        System.out.println(sql);
         query(sql);
     }
     
     public void exists(String table, String key, String value) throws SQLException {
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-        ResultSet rs = stmt.executeQuery("SELECT * FROM " + table + " WHERE " + key + " = " + value);
+        ResultSet rs = stmt.executeQuery("SELECT * FROM " + table + " WHERE " + key + " = '" + value + "'");
         if(rs.last()) {
             throw new SQLException("Errore, una ennupla con lo stesso valore come chiave (" + value + ") è già presente nel DB.");
         }
@@ -62,9 +70,36 @@ public class FConnect {
         return rs;        
     }
     
-    private void resultSetToAssocArray(ResultSet rs) {
-        
+    public ResultSet search(String table, String[] keys, String[] conditions) throws SQLException {        
+        Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        String cond = "";
+        int i = 0;
+        int len = keys.length;
+        for(String key : keys) {
+            if(conditions[i] instanceof String) {
+                cond = cond + key + " = " + conditions[i];
+            }
+            if(i < len-1) {
+                cond = cond + " AND ";
+                i++;
+            }
+        }        
+        String sql = "SELECT * FROM " + table + " WHERE " + cond;  
+        System.out.println(sql);
+        ResultSet rs = stmt.executeQuery(sql);
+        return rs;
     }
     
     
+    private void resultSetToAssocArray(ResultSet rs) {
+        
+    }
+    private static boolean isInt(String s) {
+        try {
+            int i = Integer.parseInt(s);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
 }

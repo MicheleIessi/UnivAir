@@ -65,7 +65,6 @@ public class Route {
     public List retrieve(int id) throws SQLException {
         FConnect con = new FConnect();
         ResultSet rs = con.load(this.table,condition + Integer.toString(id));
-        int columns = rs.getMetaData().getColumnCount();
         Map<String,String> map;
         List<Map<String, String>> data = new ArrayList<>();
         int i = 0;

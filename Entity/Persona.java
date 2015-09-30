@@ -5,7 +5,14 @@
  */
 package univair.Entity;
 
-import java.util.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import univair.Foundation.FConnect;
 /**
  *
  * @author Michele
@@ -13,7 +20,7 @@ import java.util.Date;
 public class Persona {
     /* costruttori */
     public Persona() {};
-    public Persona(String n, String c, Date d, String s, String cf, String e, String ln, Address lr) {
+    public Persona(String n, String c, GregorianCalendar d, String s, String cf, String e, String ln, Address lr) {
         if(controlField(n, "alpha") && controlField(c, "alpha") && controlField(s, "sex") && cf.length()==16 && controlField(ln, "alpha")) {
             this.nome = n;
             this.cognome = c;
@@ -29,20 +36,20 @@ public class Persona {
     /* getter & setter */
     public String getNome()    { return this.nome; }
     public String getCognome() { return this.cognome; }
-    public Date getDDN()       { return this.ddn; }
+    public GregorianCalendar getDDN()       { return this.ddn; }
     public String getSex()     { return this.sex; }
     public String getCF()      { return this.CF; }
     public String getEmail()   { return this.email; }
     public String getLDN()     { return this.ldn; }
     public Address getLDR()    { return this.ldr; }
-    public void setNome(String n)    { this.nome = n; }
-    public void setCognome(String c) { this.cognome = c; }
-    public void setDDN(Date d)       { this.ddn = d; }
-    public void setSec(String s)     { this.sex = s; }
-    public void setCF(String cf)     { this.CF = cf; }
-    public void SetEmail(String e)   { this.email = e; }
-    public void setLDN(String ln)    { this.ldn = ln; }
-    public void setLDR(Address lr)   { this.ldr = lr; }
+    public void setNome(String n)           { this.nome = n; }
+    public void setCognome(String c)        { this.cognome = c; }
+    public void setDDN(GregorianCalendar d) { this.ddn = d; }
+    public void setSec(String s)            { this.sex = s; }
+    public void setCF(String cf)            { this.CF = cf; }
+    public void SetEmail(String e)          { this.email = e; }
+    public void setLDN(String ln)           { this.ldn = ln; }
+    public void setLDR(Address lr)          { this.ldr = lr; }
     /* metodi di controllo */
     public static boolean controlField(String s, String tipo) {
         char[] c = s.toCharArray();
@@ -69,13 +76,69 @@ public class Persona {
         }
         return esito;
     }
+    /* metodi per il DB */
+    public String getDateString() {
+        return (this.ddn.get(1)+1900) + "-" + (this.ddn.get(2)+1) + "-" + this.ddn.get(5);    }
+    private GregorianCalendar getDateFromString(String date) {
+        int year = Integer.parseInt(date.substring(0, 4))-1900;
+        int month = Integer.parseInt(date.substring(5, 7))-1;
+        int day = Integer.parseInt(date.substring(8, 10));
+        return new GregorianCalendar(year, month, day);
+    }
+    public List retrieve(int id) throws SQLException {
+        FConnect con = new FConnect();
+        ResultSet rs = con.load(table, condition + Integer.toString(id));
+        Map<String,Object> map;
+        List<Map<String, Object>> data = new ArrayList<>();
+        int i = 0;
+        while(rs.next()) {
+            map = new HashMap<>();
+            map.put("id", Integer.toString(rs.getInt(1)));
+            map.put("nome", rs.getString(2));
+            map.put("cognome", rs.getString(3));
+            map.put("ddn", getDateFromString(rs.getString(4)));
+            map.put("sex", rs.getString(5));
+            map.put("CF", rs.getString(6));
+            map.put("email", rs.getString(7));
+            map.put("ldn", rs.getString(8));
+            Address temp = new Address(rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13));
+            map.put("ldr", temp);
+            data.add(i, map);
+            i++;
+        }
+        return data;
+    }
+    public void store() throws SQLException {
+        FConnect con = new FConnect();
+        ArrayList<String> values = new ArrayList<>();
+        con.exists(table, "codfis", this.CF);
+        con.exists(table, "email", this.email);
+        values.add("DEFAULT");
+        values.add(this.nome);
+        values.add(this.cognome);
+        values.add(this.getDateString());
+        values.add(this.sex);
+        values.add(this.CF);
+        values.add(this.email);
+        values.add(this.ldn);
+        values.add(this.ldr.getCittà());
+        values.add(this.ldr.getVia());
+        values.add(this.ldr.getNumero());
+        values.add(this.ldr.getCAP());
+        values.add(this.ldr.getProv());
+        con.store(table, values);
+    }
     /* attributi */
     protected String nome;
     protected String cognome;
-    protected Date ddn;
+    protected GregorianCalendar ddn;
     protected String sex;
     protected String CF;
     protected String email;
     protected String ldn; //luogo di nascita
     protected Address ldr;//luogo di residenza
+    /* attributi per il db */
+    private final String table = "persona";
+    private final String key = "id";
+    private final String condition = "id = ";
 }
