@@ -31,7 +31,6 @@ public class UnivAir {
      */
     public static void main(String[] args) throws SQLException {
         
-        Address add = new Address("Casacanditella", "Madonna", "19", "66010", "CH");
         GregorianCalendar date = new GregorianCalendar(115, 8, 30);
         System.out.println(date.get(2));
         
@@ -56,7 +55,5 @@ public class UnivAir {
                 System.out.println(rs.getString(i+1));
             }
         }
-        
-    }
-    
+    }    
 }
