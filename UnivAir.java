@@ -31,10 +31,10 @@ public class UnivAir {
      */
     public static void main(String[] args) throws SQLException {
         
-        Route r = new Route();
-        r.createFromDB(14);
-        System.out.println(r.toString());
+        Flight f = new Flight();
+        GregorianCalendar gc = new GregorianCalendar(115, 9, 1);
+        f.createFromDB(102, gc);
         
-        
+        System.out.println(f.getCrew()[0].getID());
     }    
 }

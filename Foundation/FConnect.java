@@ -67,6 +67,7 @@ public class FConnect {
     public ResultSet load(String table, String condition) throws SQLException {
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         String sql = "SELECT * FROM " + table + " WHERE " + condition;
+        System.out.println(sql);
         ResultSet rs = stmt.executeQuery(sql);
         return rs;        
     }
@@ -78,7 +79,7 @@ public class FConnect {
         int len = keys.length;
         for(String key : keys) {
             if(values[i] instanceof String) {
-                cond = cond + key + " = " + values[i];
+                cond = cond + key + " = '" + values[i] + "'";
             }
             if(i < len-1) {
                 cond = cond + " AND ";
@@ -86,7 +87,7 @@ public class FConnect {
             }
         }        
         String sql = "SELECT * FROM " + table + " WHERE " + cond;  
-        //System.out.println(sql);
+        System.out.println(sql);
         ResultSet rs = stmt.executeQuery(sql);
         return rs;
     }

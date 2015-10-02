@@ -67,8 +67,18 @@ public class Flight {
         return dat;
     }
 
-    public void createFromDB(int id, GregorianCalendar gc) {
-        
+    public void createFromDB(int id, GregorianCalendar gc) throws SQLException {
+        Map<String,Object> map = retrieve(id, gc);
+        Route r = (Route) map.get("route");
+        String nid = (String) map.get("id");
+        GregorianCalendar date = (GregorianCalendar) map.get("date");
+        Employer[] e = (Employer[]) map.get("crew");
+        int s = (int) map.get("seats");
+        this.setRoute(r);
+        this.setID(nid);
+        this.setDate(date);
+        this.setCrew(e);
+        this.setSeats(s);
     }
     public Employer[] getEmployersFromDB(int id, GregorianCalendar gc) throws SQLException {
         FConnect con = new FConnect();
@@ -76,27 +86,52 @@ public class Flight {
         String dat = getStringFromDate(gc);
         String[] conds = {Integer.toString(id),dat};
         ResultSet rs = con.search("lavoripassati", keys, conds);
-        String e1 = rs.getString(3);
-        String e2 = rs.getString(4);
-        String e3 = rs.getString(5);
-        String e4 = rs.getString(6);
-        String e5 = rs.getString(7);
+        rs.next();
+        System.out.println(rs.getString(3));
+        int e1 = Integer.parseInt(rs.getString(3));
+        int e2 = Integer.parseInt(rs.getString(4));
+        int e3 = Integer.parseInt(rs.getString(5));
+        int e4 = Integer.parseInt(rs.getString(6));
+        int e5 = Integer.parseInt(rs.getString(7));
         Employer pilot = new Employer();
-        pilot.createFromDB(Integer.parseInt(e1));
+        Employer copilot = new Employer();
+        Employer hostess1 = new Employer();
+        Employer hostess2 = new Employer();
+        Employer hostess3 = new Employer();
+        pilot.createFromDB(e1);
+        copilot.createFromDB(e2);
+        hostess1.createFromDB(e3);
+        hostess2.createFromDB(e4);
+        hostess3.createFromDB(e5);
+        Employer[] e = {pilot,copilot,hostess1,hostess2,hostess3};
+        return e;
+    }
+    public int getRouteID(int id) throws SQLException {
+        FConnect con = new FConnect();
+        ResultSet rs = con.load("volo", "id = " + id);
+//        System.out.println(rs.getRow());
+        int rt = 0;
+        while(rs.next())
+             rt = rs.getInt(3);
+        return rt;
     }
     public Map retrieve(int id, GregorianCalendar gc) throws SQLException {
         FConnect con = new FConnect();
+        String[] cond = {Integer.toString(id),getStringFromDate(gc)};
         ResultSet rs = con.search(table, key, cond);
         Map<String,Object> map = new HashMap<>();
         while(rs.next()) {
             map = new HashMap<>();
             Route r = new Route();
-            r.createFromDB(id);
+            Employer[] e = getEmployersFromDB(id, gc);
+            r.createFromDB(getRouteID(id));
             map.put("route", r);
-            map.put("ID", rs.getInt(1));
+            map.put("ID", Integer.toString(rs.getInt(1)));
             map.put("date", getDateFromString(rs.getString(2)));
-            map.put("crew","crew da inserire");
+            map.put("crew", e);
+            map.put("seats", rs.getInt(4));
         }
+        return map;
     }
     /* attributi */
     private Route route;
@@ -107,5 +142,4 @@ public class Flight {
     /* attributi per il db */
     private static final String table = "volo";
     private static final String[] key = {"id","decollo"};
-    private static final String[] cond = {"id = ","decollo = "};
 }
