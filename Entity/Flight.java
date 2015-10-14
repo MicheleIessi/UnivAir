@@ -39,7 +39,6 @@ public class Flight {
     public void setCrew(Employer[] e) { this.crew = e; }
     public void setSeats(int s)       { this.seats = s; }
     public void setDate(GregorianCalendar d)       { this.date = d; }
-    /* metodi di classe */
     public String getDateString() {
         return (this.date.get(1)+1900) + "-" + (this.date.get(2)+1) + "-" + this.date.get(5);    }
     public void setPilot(Employer e)   { this.crew[0] = e; }
@@ -47,7 +46,7 @@ public class Flight {
     public void setHost1(Employer e)   { this.crew[2] = e; }
     public void setHost2(Employer e)   { this.crew[3] = e; }
     public void setHost3(Employer e)   { this.crew[4] = e; }
-    /* metodi di controllo */
+    /* metodi di classe */
     public static void controlCrew(Employer[] e) {
         if(!e[0].type.equals("Pilot")) throw new IllegalArgumentException("Errore, pilota mancante");
         if(!e[1].type.equals("Copilot")) throw new IllegalArgumentException("Errore, copilota mancante");
@@ -66,28 +65,29 @@ public class Flight {
         String dat = (gc.get(1)+1900) + "-" + (gc.get(2)+1) + "-" + gc.get(5);
         return dat;
     }
-
     public void createFromDB(int id, GregorianCalendar gc) throws SQLException {
         Map<String,Object> map = retrieve(id, gc);
         Route r = (Route) map.get("route");
         String nid = (String) map.get("id");
-        GregorianCalendar date = (GregorianCalendar) map.get("date");
+        GregorianCalendar dat = (GregorianCalendar) map.get("date");
         Employer[] e = (Employer[]) map.get("crew");
         int s = (int) map.get("seats");
         this.setRoute(r);
         this.setID(nid);
-        this.setDate(date);
+        this.setDate(dat);
         this.setCrew(e);
         this.setSeats(s);
     }
-    public Employer[] getEmployersFromDB(int id, GregorianCalendar gc) throws SQLException {
+    public Employer[] getEmployersFromDB(int id, GregorianCalendar gc) throws SQLException, IllegalArgumentException {
         FConnect con = new FConnect();
         String[] keys = {"idvolo","decollovolo"};
         String dat = getStringFromDate(gc);
         String[] conds = {Integer.toString(id),dat};
         ResultSet rs = con.search("lavoripassati", keys, conds);
         rs.next();
-        System.out.println(rs.getString(3));
+        if(rs.getRow() == 0) {
+            throw new IllegalArgumentException("Nessun risultato per l'id selezionato");
+        }
         int e1 = Integer.parseInt(rs.getString(3));
         int e2 = Integer.parseInt(rs.getString(4));
         int e3 = Integer.parseInt(rs.getString(5));
@@ -109,7 +109,7 @@ public class Flight {
     public int getRouteID(int id) throws SQLException {
         FConnect con = new FConnect();
         ResultSet rs = con.load("volo", "id = " + id);
-//        System.out.println(rs.getRow());
+        //System.out.println(rs.getRow());
         int rt = 0;
         while(rs.next())
              rt = rs.getInt(3);
@@ -133,13 +133,16 @@ public class Flight {
         }
         return map;
     }
+    public void store() {
+        //not yet implemented
+    }
     /* attributi */
     private Route route;
     private String ID;
     private Employer[] crew;
     private int seats;
     private GregorianCalendar date;
-    /* attributi per il db */
+    /* attributi di classe (per il db) */
     private static final String table = "volo";
     private static final String[] key = {"id","decollo"};
 }

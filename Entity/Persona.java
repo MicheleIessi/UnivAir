@@ -50,7 +50,7 @@ public class Persona implements DBInterface {
     public void SetEmail(String e)          { this.email = e; }
     public void setLDN(String ln)           { this.ldn = ln; }
     public void setLDR(Address lr)          { this.ldr = lr; }
-    /* metodi di controllo */
+    /* metodi di classe */
     public static boolean controlField(String s, String tipo) {
         char[] c = s.toCharArray();
         boolean esito = true;
@@ -58,8 +58,7 @@ public class Persona implements DBInterface {
             for(int i = 0; i < c.length; i++) {
                 if(Character.isDigit(c[i])) {
                     throw new IllegalArgumentException("Nome, cognome o luogo di nascita errati.");
-                }
-                 
+                }                 
             }
         }
         if(tipo.equals("digit")) {
@@ -134,7 +133,7 @@ public class Persona implements DBInterface {
         return map;
     }
     @Override
-    public void store(int id) throws SQLException {
+    public void store() throws SQLException {
         FConnect con = new FConnect();
         ArrayList<String> values = new ArrayList<>();
         con.exists(table, "codfis", this.CF);
@@ -183,7 +182,7 @@ public class Persona implements DBInterface {
     protected String email;
     protected String ldn; //luogo di nascita
     protected Address ldr;//luogo di residenza
-    /* attributi per il db */
+    /* attributi di classe (per il db) */
     private static final String table = "persona";
     private static final String key = "id";
     private static final String condition = "id = ";

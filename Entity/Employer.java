@@ -49,14 +49,14 @@ public class Employer extends Persona implements DBInterface {
     public void setType(String ty)  { this.type = ty; }
     /* metodi di controllo */
     public static void controlType() {
-        
-        
-        
-        
-        
-        
+        //not yet implemented
     }
     /* metodi per il DB */
+    @Override
+    public void store() throws SQLException {
+        //not yet implemented
+    }
+
     public GregorianCalendar getDateFromString(String date) {
         int year = Integer.parseInt(date.substring(0, 4))-1900;
         int month = Integer.parseInt(date.substring(5, 7))-1;
@@ -118,4 +118,5 @@ public class Employer extends Persona implements DBInterface {
     private final String table = "impiegato";
     private final String id = "id";
     private final String condition = "id = ";
+
 }

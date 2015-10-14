@@ -17,7 +17,7 @@ import univair.Foundation.FConnect;
  *
  * @author Michele
  */
-public class Route implements DBInterface {
+public class Route {
     /* costruttori */
     public Route() {};
     public Route(String dep, String des) {
@@ -43,7 +43,7 @@ public class Route implements DBInterface {
         }
         this.destination = des; 
     }
-    /* metodi di controllo */
+    /* metodi di classe */
     public static boolean controlCity(String city) {
         for(City c : City.values()) {
             if (c.toString().equals(city))
@@ -52,7 +52,6 @@ public class Route implements DBInterface {
         return false;
     }
     /* metodi per il DB */
-    @Override
     public void createFromDB(int id) throws SQLException {
         Map<String,String> map = retrieve(id);
         String dep = map.get("departure").trim();
@@ -60,7 +59,6 @@ public class Route implements DBInterface {
         this.setDeparture(dep);
         this.setDestination(des);
     }
-    @Override
     public void store(int id) throws SQLException{
         ArrayList<String> values = new ArrayList<>();
         FConnect con = new FConnect();
@@ -70,7 +68,6 @@ public class Route implements DBInterface {
         values.add(this.destination);
         con.store(table, values);  
     }
-    @Override
     public Map retrieve(int id) throws SQLException {
         FConnect con = new FConnect();
         ResultSet rs = con.load(table,condition + Integer.toString(id));

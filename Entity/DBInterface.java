@@ -15,6 +15,6 @@ import java.util.Map;
 public interface DBInterface {
     public void createFromDB(int id) throws SQLException;
     public static void delete(int id) throws SQLException {};
-    public void store(int id) throws SQLException;
+    public void store() throws SQLException;
     public Map retrieve(int id) throws SQLException;
 }
