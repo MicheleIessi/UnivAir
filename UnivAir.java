@@ -31,8 +31,11 @@ public class UnivAir {
      */
     public static void main(String[] args) throws SQLException {
         
-        Booking b = new Booking();
-        b.createFromDB(1000003);
-        System.out.println(b.getFlight().getDateString());
+        Persona p = new Persona();
+        p.createFromDB(10008);
+        GregorianCalendar gc = new GregorianCalendar(70, 9, 9);
+        Employer e = new Employer(p, "5000", "Hostess", gc);
+        System.out.println(e.getSalary() + " " + e.getType());
+        e.store();
     }    
 }

@@ -7,6 +7,7 @@ package univair.Entity;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,18 +24,23 @@ public class Employer extends Persona implements DBInterface {
         this.ID = id;
         this.type = ty;
     }/* per autenticazione */
-    public Employer(Persona p, String id, String s, GregorianCalendar f) {
-        this.nome = p.nome;
-        this.cognome = p.cognome;
-        this.ddn = p.ddn;
-        this.sex = p.sex;
-        this.CF = p.CF;
-        this.email = p.email;
-        this.ldn = p.ldn;
-        this.ldr = p.ldr;
-        this.ID = id;
-        this.salary = s;
-        this.from = f;
+    public Employer(Persona p, String s, String ty, GregorianCalendar f) throws SQLException {
+        if(controlType(ty)) {
+            this.nome = p.nome;
+            this.cognome = p.cognome;
+            this.ddn = p.ddn;
+            this.sex = p.sex;
+            this.CF = p.CF;
+            this.email = p.email;
+            this.ldn = p.ldn;
+            this.ldr = p.ldr;
+            this.ID = Integer.toString(p.getIDFromDB());
+            this.salary = s;
+            this.from = f;
+            this.type = ty;
+        }
+        else
+            System.out.println("creazione employer non riuscita, tipo non riconosciuto");
     }
     /* getter & setter */
     public String getID()     { return this.ID; }
@@ -46,15 +52,42 @@ public class Employer extends Persona implements DBInterface {
     public void setSalary(String s) { this.salary = s; }
     public void setFrom(GregorianCalendar f)     { this.from = f; }
     public void setTo(GregorianCalendar t)       { this.to = t; }
-    public void setType(String ty)  { this.type = ty; }
+    public void setType(String ty)  { 
+        if(controlType(ty))
+            this.type = ty; 
+        else System.out.println("errore, tipo non accettato gestire error frame Employer.controlType");
+        }
     /* metodi di controllo */
-    public static void controlType() {
-        //not yet implemented
+    private boolean controlType(String ty) {
+        boolean esito = false;
+        for(EmployerTypes et : EmployerTypes.values()) 
+            if(et.toString().equals(ty))
+                esito = true;
+        return esito;
     }
+    /* metodi di classe */
+    private String getStringFromDate(GregorianCalendar gc) {
+        String dat = (gc.get(1)+1900) + "-" + (gc.get(2)+1) + "-" + gc.get(5);
+        return dat;
+    }
+
     /* metodi per il DB */
     @Override
     public void store() throws SQLException {
-        //not yet implemented
+        FConnect con = new FConnect();
+        if(con.exists(table, id, this.ID)) {
+            System.out.println("Errore impiegato già presente con lo stesso id gestire Error frame Employer.store");
+        }
+        else {
+            ArrayList<String> values = new ArrayList<>();
+            values.add(this.ID);
+            values.add(this.type);
+            values.add(this.salary);
+            values.add(this.getStringFromDate(this.from));
+            if(this.to != null)                
+                values.add(this.getStringFromDate(this.to));
+            con.store(table, values);
+        }
     }
 
     public GregorianCalendar getDateFromString(String date) {

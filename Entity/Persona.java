@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import univair.Foundation.FConnect;
 /**
@@ -136,26 +135,45 @@ public class Persona implements DBInterface {
     public void store() throws SQLException {
         FConnect con = new FConnect();
         ArrayList<String> values = new ArrayList<>();
-        con.exists(table, "codfis", this.CF);
-        con.exists(table, "email", this.email);
-        values.add("DEFAULT");
-        values.add(this.nome);
-        values.add(this.cognome);
-        values.add(this.getDateString());
-        values.add(this.sex);
-        values.add(this.CF);
-        values.add(this.email);
-        values.add(this.ldn);
-        values.add(this.ldr.getCittà());
-        values.add(this.ldr.getVia());
-        values.add(this.ldr.getNumero());
-        values.add(this.ldr.getCAP());
-        values.add(this.ldr.getProv());
-        con.store(table, values);
+        boolean cf = con.exists(table, "codfis", this.CF);
+        boolean em = con.exists(table, "email", this.email);
+        if(cf || em) {
+            System.out.println("persona già presente nel db con lo stesso cf o mail gestire error frame Persona.store()");
+        }
+        else {
+            values.add("DEFAULT");
+            values.add(this.nome);
+            values.add(this.cognome);
+            values.add(this.getDateString());
+            values.add(this.sex);
+            values.add(this.CF);
+            values.add(this.email);
+            values.add(this.ldn);
+            values.add(this.ldr.getCittà());
+            values.add(this.ldr.getVia());
+            values.add(this.ldr.getNumero());
+            values.add(this.ldr.getCAP());
+            values.add(this.ldr.getProv());
+            con.store(table, values);
+        }
     }
     public static void delete(int id) throws SQLException {
         FConnect con = new FConnect();
         con.delete(table, key, Integer.toString(id));
+    }
+    public int getIDFromDB() throws SQLException {
+        FConnect con = new FConnect();
+        String cf = this.CF;
+        ResultSet rs = null;
+        System.out.println(cf);
+        try {
+            rs = con.load(table, "codfis = '" + cf.trim()+"'");
+        } catch (SQLException e) {
+            System.out.println("Errore, la persona non è presente nel DB, è necessario aggiungerla.");
+        }
+        rs.last();
+        int id = rs.getInt(1);
+        return id;
     }
     /* metodi di debug */
     @Override

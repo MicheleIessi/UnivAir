@@ -10,11 +10,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  *
@@ -56,18 +52,38 @@ public class FConnect {
     }
     
     
-    public void exists(String table, String key, String value) throws SQLException {
+    public boolean exists(String table, String key, String value) throws SQLException {
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         ResultSet rs = stmt.executeQuery("SELECT * FROM " + table + " WHERE " + key + " = '" + value + "'");
+        boolean result = false;
         if(rs.last()) {
-            throw new SQLException("Errore, una ennupla con lo stesso valore come chiave (" + value + ") è già presente nel DB.");
+            result = true;
         }
+        return result;
+    }
+    
+    public boolean existsMultipleKey(String table, String[] keys, String[] values) throws SQLException {
+        Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        String sql = "";
+        Boolean result = false;
+        if(keys.length == 2) {
+            sql = "SELECT * FROM " + table + " WHERE " + keys[0] + " = '" + values[0] + "' AND " + keys[1] + " = '" + values[1] + "'";
+            }
+        else if (keys.length == 3) {
+            sql = "SELECT * FROM " + table + " WHERE " + keys[0] + " = '" + values[0] + "' AND " + keys[1] + " = '" + values[1] + "' AND " + keys[2] + " = '" + values[2] + "'";
+        }
+        //System.out.println(sql);
+        ResultSet rs = stmt.executeQuery(sql);
+        if(rs.last()) {
+            result = true;
+        }
+        return result;
     }
     
     public ResultSet load(String table, String condition) throws SQLException {
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         String sql = "SELECT * FROM " + table + " WHERE " + condition;
-        //System.out.println(sql);
+//        System.out.println(sql);
         ResultSet rs = stmt.executeQuery(sql);
         return rs;        
     }

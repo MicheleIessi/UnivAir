@@ -7,6 +7,7 @@ package univair.Entity;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +69,7 @@ public class Flight {
     public void createFromDB(int id, GregorianCalendar gc) throws SQLException {
         Map<String,Object> map = retrieve(id, gc);
         Route r = (Route) map.get("route");
-        String nid = (String) map.get("id");
+        String nid = (String) map.get("ID");
         GregorianCalendar dat = (GregorianCalendar) map.get("date");
         Employer[] e = (Employer[]) map.get("crew");
         int s = (int) map.get("seats");
@@ -133,8 +134,20 @@ public class Flight {
         }
         return map;
     }
-    public void store() {
-        //not yet implemented
+    public void store() throws SQLException {
+        FConnect con = new FConnect();
+        String[] val = {this.ID,this.getDateString()};
+        if(!con.existsMultipleKey(table, key, val)) {        
+            ArrayList<String> values = new ArrayList<>();
+            values.add(this.ID);
+            values.add(this.getDateString());
+            values.add(Integer.toString(this.route.getIdFromDB()));
+            values.add(Integer.toString(seats));
+            con.store(table, values);    
+        }
+        else {
+            System.out.println("volo con stesse keys già presente nel db GESTIRE ERROR FRAME Flight.store()");
+        }
     }
     /* attributi */
     private Route route;

@@ -9,6 +9,7 @@ import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,43 +46,44 @@ public class Booking implements DBInterface {
     public Persona getPersona() { return this.per; }
     public Flight getFlight() { return this.fl; }
     public String getClss() { return this.clss; }
+    public double getPrice() { return this.price; }
     public boolean getPriceRed() { return this.priceReduction; }
     public boolean getMealSupp() { return this.mealSupplement; }
     public boolean getPetSupp() { return this.petSupplement; }
     public boolean getLuggageSupp() { return this.luggageSupplement; }
     public boolean getMagazinesSupp() { return this.magazinesSupplement; }
     public double getDiscount() { return this.discount; }
-    private void setPersona(Persona p) {
+    public void setPersona(Persona p) {
         this.per = p;
     }
-    private void setFlight(Flight f) {
+    public void setFlight(Flight f) {
         this.fl = f;
     }
-    private void setClss(String c) {
+    public void setClss(String c) {
         if(controlClass(c)) {
             this.clss = c;
         }
         else throw new IllegalArgumentException("Classe non valida, deve essere 'first' o 'second'");
     }
-    private void setPrice(double pr) {
+    public void setPrice(double pr) {
         this.price = pr;
     }
-    private void setPriceRed(boolean red) { 
+    public void setPriceRed(boolean red) { 
         this.priceReduction = red;
     }
-    private void setMealSupp(boolean meal) {
+    public void setMealSupp(boolean meal) {
         this.mealSupplement = meal;
     }
-    private void setPetSupp(boolean pet) {
+    public void setPetSupp(boolean pet) {
         this.petSupplement = pet;
     }
-    private void setLuggageSupp(boolean lugg) {
+    public void setLuggageSupp(boolean lugg) {
         this.luggageSupplement = lugg;
     }
-    private void setMagazinesSupp(boolean mgzn) {
+    public void setMagazinesSupp(boolean mgzn) {
         this.magazinesSupplement = mgzn;
     }
-    private void setDiscount(double newDis) {
+    public void setDiscount(double newDis) {
         double oldPrc = this.price;
         double oldDis = this.discount;
         
@@ -152,6 +154,7 @@ public class Booking implements DBInterface {
         boolean s3 = (boolean) map.get("luggageSupplement");
         boolean s4 = (boolean) map.get("magazinesSupplement");
         double dis = (Double) map.get("discount");
+        double pr = (Double) map.get("price");
         this.setPersona(p);
         this.setFlight(f);
         this.setClss(c.trim());
@@ -161,12 +164,37 @@ public class Booking implements DBInterface {
         this.setLuggageSupp(s3);
         this.setMagazinesSupp(s4);
         this.setDiscount(dis);
-        double pr = computePrice(f);
+        System.out.println(pr);
         this.setPrice(pr);
     }
     @Override
     public void store() throws SQLException {
-        //not yet implemented
+        FConnect con = new FConnect();
+        String persID = Integer.toString(this.per.getIDFromDB());
+        String[] keys = {"idpersona","idvolo","datavolo"};
+        String[] vals = {persID,this.fl.getID(),this.fl.getDateString()};
+        if(!con.existsMultipleKey(table, keys, vals)) {         
+            ArrayList<String> values = new ArrayList<>();
+            values.add("DEFAULT");
+            values.add(persID);
+            values.add(this.fl.getID());
+            values.add(this.fl.getDateString());
+            values.add(this.clss);
+            values.add(Double.toString(this.price));
+            values.add(Boolean.toString(this.priceReduction));
+            values.add(Boolean.toString(this.mealSupplement));
+            values.add(Boolean.toString(this.petSupplement));
+            values.add(Boolean.toString(this.luggageSupplement));
+            values.add(Boolean.toString(this.magazinesSupplement));
+            String a = String.valueOf(this.discount);
+            int ind = a.lastIndexOf(".");
+            a = a.substring(0, ind);
+            values.add(a);
+            con.store(table, values);
+        }
+        else {
+            System.out.println("BOOKING GIà PRESENTE NEL DB GESTIRE ERROR FRAME");
+        }
     }
     @Override
     public Map retrieve(int id) throws SQLException {
@@ -182,7 +210,7 @@ public class Booking implements DBInterface {
             map.put("persona", p);
             map.put("flight", f);
             map.put("clss", rs.getString(5));
-            map.put("price", Double.parseDouble(String.valueOf(rs.getInt(6))));
+            map.put("price", rs.getDouble(6));
             map.put("priceReduction", rs.getBoolean(7));
             map.put("mealSupplement", rs.getBoolean(8));
             map.put("petSupplement", rs.getBoolean(9));
@@ -190,11 +218,12 @@ public class Booking implements DBInterface {
             map.put("magazinesSupplement", rs.getBoolean(11));
             map.put("discount", Double.parseDouble(String.valueOf(rs.getInt(12))));
         }
-        System.out.println("ok");
+        System.out.println("Prenotazione trovata e caricata dal db");
         return map;
     }
     public static void delete(int id) throws SQLException {
-        //not yet implemented
+        FConnect con = new FConnect();
+        con.delete(table, key, Integer.toString(id));
     }
     /* attributi */
     private Persona per;
