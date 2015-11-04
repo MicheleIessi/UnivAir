@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import univair.Foundation.FConnect;
 
@@ -56,10 +57,10 @@ public class Flight {
         if(!e[4].type.equals("Hostess")) throw new IllegalArgumentException("Errore, hostess 3 mancante");
     }
     /* metodi per il DB */
-    private GregorianCalendar getDateFromString(String date) {
+    private static GregorianCalendar getDateFromString(String date) {
         int year = Integer.parseInt(date.substring(0, 4))-1900;
         int month = Integer.parseInt(date.substring(5, 7))-1;
-        int day = Integer.parseInt(date.substring(8, 10));
+        int day = Integer.parseInt(date.substring(8, date.length()));
         return new GregorianCalendar(year, month, day);
     }
     private String getStringFromDate(GregorianCalendar gc) {
@@ -115,6 +116,20 @@ public class Flight {
         while(rs.next())
              rt = rs.getInt(3);
         return rt;
+    }
+    public static ArrayList getFlightsFromRouteID(int id) throws SQLException {
+        FConnect con = new FConnect();
+        ResultSet rs = con.load(table, "idtratta = " + id);
+        ArrayList list = new ArrayList();
+        Map<String,Object> map = new HashMap<>();
+        while(rs.next()) {
+            map = new HashMap<>();
+            map.put("ID", Integer.toString(rs.getInt(1)));
+            map.put("date", getDateFromString(rs.getString(2)));
+            map.put("seats", rs.getInt(4));
+            list.add(map);
+        }
+        return list;
     }
     public Map retrieve(int id, GregorianCalendar gc) throws SQLException {
         FConnect con = new FConnect();

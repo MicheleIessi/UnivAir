@@ -21,6 +21,9 @@ public class Route {
     /* costruttori */
     public Route() {};
     public Route(String dep, String des) {
+        if(des.equals(dep)) {
+            throw new IllegalArgumentException("Luogo di partenza e destinazione uguale");
+        }
         boolean controlCity = (controlCity(des) && controlCity(dep));
         if(controlCity) {
             this.departure = dep;
@@ -95,10 +98,13 @@ public class Route {
         try {
             rs = con.search(table, keys, vals);
         } catch (SQLException e) {
-            System.out.println("La tratta " + dep + "-" + des + " non è presente nel DB, è necessario aggiungerla");
+            throw new IllegalArgumentException("Errore, la tratta "+dep+"-"+des+" non è presente nel DB. È necessario aggiungerla.");
         }
         if(rs.last()) {
             id = rs.getInt(1);
+        }
+        if(id == 0) {
+            throw new IllegalArgumentException("Errore, la tratta "+dep+"-"+des+" non è presente nel DB. È necessario aggiungerla.");
         }
         return id;
     }

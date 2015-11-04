@@ -103,7 +103,6 @@ public class FConnect {
             }
         }        
         String sql = "SELECT * FROM " + table + " WHERE " + cond;  
-        //System.out.println(sql);
         ResultSet rs = stmt.executeQuery(sql);
         return rs;
     }

@@ -7,6 +7,7 @@ package univair;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -33,8 +34,6 @@ public class UnivAir {
      */
     public static void main(String[] args) throws SQLException {
         
-        JFrame f = new HomePanel();
-        
-        
+        HomePanel f = new HomePanel();
     }    
 }
