@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JFrame;
 import univair.Entity.Address;
 import univair.Entity.Booking;
 import univair.Entity.City;
@@ -19,6 +20,7 @@ import univair.Entity.Flight;
 import univair.Entity.Persona;
 import univair.Entity.Route;
 import univair.Foundation.FConnect;
+import univair.Presentation.HomePanel;
 
 /**
  *
@@ -31,11 +33,8 @@ public class UnivAir {
      */
     public static void main(String[] args) throws SQLException {
         
-        Persona p = new Persona();
-        p.createFromDB(10008);
-        GregorianCalendar gc = new GregorianCalendar(70, 9, 9);
-        Employer e = new Employer(p, "5000", "Hostess", gc);
-        System.out.println(e.getSalary() + " " + e.getType());
-        e.store();
+        JFrame f = new HomePanel();
+        
+        
     }    
 }
