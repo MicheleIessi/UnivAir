@@ -19,9 +19,9 @@ public class BookControl {
         try {
             if("0".equals(map.get("seats").toString()))
                 throw new IllegalArgumentException("Il volo selezionato non ha posti disponibili");
+            new BookPanel(map);
         } catch (IllegalArgumentException e) {
             new ErrorFrame(e.getMessage(),0);
         }
-        new BookPanel(map);
     }
 }

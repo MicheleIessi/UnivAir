@@ -22,6 +22,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -96,20 +98,22 @@ public class BookPanel extends JFrame {
         //center
         /* primo JPanel */
         centralPanel = new JPanel();
-        centralPanel.setAlignmentX(CENTER_ALIGNMENT);
-        centralPanel.setLayout(new BorderLayout());
+        centralPanel.setLayout(new BoxLayout(centralPanel, BoxLayout.Y_AXIS));
+        centralPanel.setAlignmentX(CENTER_ALIGNMENT);        
         /* secondo JPanel */
         detailPanel = new JPanel();
         detailPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        detailPanel.setAlignmentY(TOP_ALIGNMENT);
+        detailPanel.setAlignmentX(CENTER_ALIGNMENT);
         detailPanel.setBorder(BorderFactory.createTitledBorder("Dettagli di prenotazione"));
+        detailPanel.setPreferredSize(new Dimension(380, 120));
+        detailPanel.setMaximumSize(new Dimension(380, 120));
         /* terzo JPanel */
         mealPanel = new JPanel();
         mealPanel.setAlignmentX(CENTER_ALIGNMENT);
         mealPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         /* prima JLabel */
         mealLabel = new JLabel("Pasto a bordo: ");
-        mealLabel.setAlignmentX(TOP_ALIGNMENT);
+        mealLabel.setAlignmentX(CENTER_ALIGNMENT);
         /* prima CheckBox */
         mealBox = new JCheckBox();
         mealBox.setSelected(false);
@@ -137,21 +141,41 @@ public class BookPanel extends JFrame {
         magazinePanel = new JPanel();
         magazinePanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         magazinePanel.setAlignmentX(CENTER_ALIGNMENT);
-        /* quarto JLabel */
+        /* quarta JLabel */
         magazineLabel = new JLabel("Servizio animali: ");
         magazineLabel.setAlignmentX(CENTER_ALIGNMENT);
         /* quarto CheckBox */
         magazineBox = new JCheckBox();
         magazineBox.setSelected(false);
-        /* primo TextField */
-        nameTextField = new JTextField();
-        nameTextField.setVisible(true);
+        /* quinta JLabel */
+        infoLabel = new JLabel("Dati prenotazione:");
+        infoLabel.setAlignmentX(CENTER_ALIGNMENT);
+        infoLabel.setFont(new Font("Times New Roman", Font.ITALIC, 14));
+        infoLabel.setForeground(Color.blue);
+                
+        
+        anagrafePanel = new JPanel();
+        anagrafePanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+        anagrafePanel.setAlignmentX(TOP_ALIGNMENT);
+        
+        personPanel = new JPanel();
+        personPanel.setLayout(new BoxLayout(personPanel, BoxLayout.Y_AXIS));
+        personPanel.setAlignmentX(TOP_ALIGNMENT);
+        
+        namePanel = new JPanel();
+        namePanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+        namePanel.setAlignmentX(TOP_ALIGNMENT);
+        
+        nameLabel = new JLabel("Nome: ");
+        nameLabel.setFont(new Font("Times New Roman",Font.ITALIC,16));
+        nameLabel.setForeground(Color.blue);
+        
+        nameTextField = new JTextField("",12);
         nameTextField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                 if("Nome".equals(nameTextField.getText())) {
                     nameTextField.setText("");
-                    nameTextField.setFont(new Font("Arial", Font.PLAIN, 18));
                     nameTextField.setForeground(Color.black);
                 }
             }
@@ -159,19 +183,22 @@ public class BookPanel extends JFrame {
             public void focusLost(FocusEvent e) {
                 if("".equals(nameTextField.getText())) {
                     nameTextField.setText("Nome");
-                    nameTextField.setFont(new Font("Arial", Font.PLAIN, 18));
                     nameTextField.setForeground(Color.lightGray);
                 }
             }
         });
-        nameTextField.setAlignmentX(LEFT_ALIGNMENT);
-
-
-
+        
 
 
 
         //</editor-fold>
+        
+        
+        namePanel.add(nameLabel);
+        namePanel.add(nameTextField);
+        personPanel.add(namePanel);
+        anagrafePanel.add(personPanel);
+        
         
         mealPanel.add(mealLabel);
         mealPanel.add(mealBox);
@@ -187,8 +214,9 @@ public class BookPanel extends JFrame {
         detailPanel.add(luggagePanel);
         detailPanel.add(magazinePanel);
         
-        centralPanel.add(detailPanel,BorderLayout.CENTER);
-        centralPanel.add(nameTextField,BorderLayout.CENTER);
+        centralPanel.add(infoLabel);
+        centralPanel.add(anagrafePanel);
+        centralPanel.add(detailPanel);
         
         content.add(centralPanel,BorderLayout.CENTER);
         content.add(imagePanel,BorderLayout.NORTH);
@@ -203,11 +231,23 @@ public class BookPanel extends JFrame {
     private JPanel animalPanel;
     private JPanel luggagePanel;
     private JPanel magazinePanel;
-    private JTextField nameTextField;
-    private JTextField surnameTextField;
+    
+    private JPanel anagrafePanel;   //flowlayout
+        private JPanel personPanel;     //boxlayout
+            private JPanel namePanel;       //flowlayout
+                private JLabel nameLabel;
+                private JTextField nameTextField;
+            private JPanel surnamePanel;    //flowlayout
+                private JLabel surnameLabel;  
+                private JTextField surnameTextField;
+            private JPanel birthCityPanel;  //flowlayout
+                private JLabel birthCityLabel;
+                private JTextField birthCityTextField;
+    
     private JXDatePicker datePicker; 
     private JRadioButton maleRadio;
     private JRadioButton femaleRadio;
+    private JLabel infoLabel;
     private JLabel priceLabel;
     private JLabel mealLabel;
     private JLabel animalLabel;

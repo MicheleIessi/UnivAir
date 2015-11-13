@@ -197,6 +197,6 @@ public class HomePanel extends javax.swing.JFrame {
     private JLabel desLabel;
     private JLabel dateLabel;
     private JButton searchButton;
-    JButton loginButton;
-    Font infoFont = new Font("Times New Roman",Font.ITALIC, 16);
+    private JButton loginButton;
+    private final Font infoFont = new Font("Times New Roman",Font.ITALIC, 16);
 }
