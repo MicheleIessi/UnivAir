@@ -8,10 +8,6 @@ package univair.Control;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.Locale;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.ListModel;
 import univair.Entity.Flight;
 import univair.Entity.Route;
 import univair.Presentation.ErrorFrame;
@@ -33,11 +29,7 @@ public class SearchControl {
             }
             int id = r.getIdFromDB();
             ArrayList list = Flight.getFlightsFromRouteID(id);
-            DefaultListModel dlm = new DefaultListModel();
-            for(Object o : list)
-                dlm.addElement(o);
-            ResultPanel rp = new ResultPanel(dlm);
-            rp.setVisible(true);
+            ResultPanel rp = new ResultPanel(list,r,dat);
         } catch (IllegalArgumentException | SQLException e) {
             new ErrorFrame(e.getMessage(), 0);
         }
@@ -53,8 +45,6 @@ public class SearchControl {
     }
 
 
-//    public static ListModel<String> a() {
-//    
-//}
+
     
 }

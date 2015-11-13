@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import univair.Foundation.FConnect;
 
@@ -108,7 +107,7 @@ public class Flight {
         Employer[] e = {pilot,copilot,hostess1,hostess2,hostess3};
         return e;
     }
-    public int getRouteID(int id) throws SQLException {
+    public static int getRouteID(int id) throws SQLException {
         FConnect con = new FConnect();
         ResultSet rs = con.load("volo", "id = " + id);
         //System.out.println(rs.getRow());
@@ -121,13 +120,17 @@ public class Flight {
         FConnect con = new FConnect();
         ResultSet rs = con.load(table, "idtratta = " + id);
         ArrayList list = new ArrayList();
-        Map<String,Object> map = new HashMap<>();
+        HashMap<String,Object> map;
         while(rs.next()) {
             map = new HashMap<>();
             map.put("ID", Integer.toString(rs.getInt(1)));
-            map.put("date", getDateFromString(rs.getString(2)));
+            map.put("date", rs.getString(2));
             map.put("seats", rs.getInt(4));
             list.add(map);
+        }
+        System.out.println(list.size());
+        if(list.isEmpty()) {
+            throw new SQLException("Nessun risultato trovato per la tratta richiesta");
         }
         return list;
     }

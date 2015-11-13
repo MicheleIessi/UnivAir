@@ -83,7 +83,7 @@ public class FConnect {
     public ResultSet load(String table, String condition) throws SQLException {
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         String sql = "SELECT * FROM " + table + " WHERE " + condition;
-//        System.out.println(sql);
+        //System.out.println(sql);
         ResultSet rs = stmt.executeQuery(sql);
         return rs;        
     }

@@ -20,8 +20,6 @@ public class ErrorFrame {
         JPanel panel = new JPanel();
         JOptionPane.showMessageDialog(panel, desc, title, errtype);
     }
-    
-    
     private String getErrorTitle(int errtype) {
         String res;
         switch(errtype) {
@@ -32,6 +30,4 @@ public class ErrorFrame {
         }
         return res;
     }
-    
-    
 }

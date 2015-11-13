@@ -61,13 +61,13 @@ public class HomePanel extends javax.swing.JFrame {
         BorderLayout border = new BorderLayout();
         Container content = this.getContentPane();
         content.setLayout(border);
-        EtchedBorder edge = new EtchedBorder(EtchedBorder.RAISED);
         
         // </editor-fold>
         
         // <editor-fold desc="Creo gli elementi da inserire nella JFrame e ne definisco le proprietà">
         
         // north
+        /* immagine */
         imagePanel = new JPanel();
         try {
             BufferedImage image = ImageIO.read(new File("src\\univair\\Presentation\\Images\\airunivaq.png"));
