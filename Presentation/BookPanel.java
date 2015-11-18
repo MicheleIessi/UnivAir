@@ -13,6 +13,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -74,8 +76,8 @@ public class BookPanel extends JFrame {
             System.out.println("Immagine non trovata - airunivaqicon.png");
         }
         this.setBounds(400, 70, 400, 600);
-        this.setMinimumSize(new Dimension(550,600));
-        this.setPreferredSize(new Dimension(550,768));
+        this.setMinimumSize(new Dimension(560,600));
+        this.setPreferredSize(new Dimension(560,768));
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         BorderLayout border = new BorderLayout();
         Container content = this.getContentPane();
@@ -97,7 +99,8 @@ public class BookPanel extends JFrame {
         //center
         centralPanel = new JPanel();
         centralPanel.setLayout(new BoxLayout(centralPanel, BoxLayout.Y_AXIS));
-        centralPanel.setAlignmentX(CENTER_ALIGNMENT);        
+        centralPanel.setAlignmentX(CENTER_ALIGNMENT);   
+        /* DETAIL PANEL */
         detailPanel = new JPanel();
         detailPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         detailPanel.setAlignmentX(CENTER_ALIGNMENT);
@@ -128,22 +131,22 @@ public class BookPanel extends JFrame {
         magazinePanel = new JPanel();
         magazinePanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         magazinePanel.setAlignmentX(CENTER_ALIGNMENT);
-        magazineLabel = new JLabel("Servizio animali: ");
+        magazineLabel = new JLabel("Servizio riviste: ");
         magazineLabel.setAlignmentX(CENTER_ALIGNMENT);
         magazineBox = new JCheckBox();
         magazineBox.setSelected(false);
         infoLabel = new JLabel("Dati prenotazione:");
         infoLabel.setAlignmentX(CENTER_ALIGNMENT);
         infoLabel.setFont(new Font("Times New Roman", Font.ITALIC, 14));
-        infoLabel.setForeground(Color.blue);
-                
-        
+        infoLabel.setForeground(Color.blue);                
+        /* ANAGRAFE PANEL */
         anagrafePanel = new JPanel();
         anagrafePanel.setLayout(new WrapLayout(FlowLayout.CENTER));
+        anagrafePanel.setBorder(BorderFactory.createTitledBorder("Dettagli anagrafici"));
         
         personPanel1 = new JPanel();
         personPanel1.setLayout(new FlowLayout(FlowLayout.LEADING));
-        personPanel1.setAlignmentX(TOP_ALIGNMENT);
+        personPanel1.setAlignmentX(CENTER_ALIGNMENT);
         
         namePanel = new JPanel();
         namePanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -231,13 +234,13 @@ public class BookPanel extends JFrame {
         labelPanel1.setLayout(new BoxLayout(labelPanel1,BoxLayout.Y_AXIS));
         labelPanel1.setAlignmentX(RIGHT_ALIGNMENT);
         
-        textPanel = new JPanel();
-        textPanel.setLayout(new BoxLayout(textPanel,BoxLayout.Y_AXIS));
-        textPanel.setAlignmentX(LEFT_ALIGNMENT);
+        textPanel1 = new JPanel();
+        textPanel1.setLayout(new BoxLayout(textPanel1,BoxLayout.Y_AXIS));
+        textPanel1.setAlignmentX(LEFT_ALIGNMENT);
         
         personPanel2 = new JPanel();
         personPanel2.setLayout(new FlowLayout(FlowLayout.LEADING));
-        personPanel2.setAlignmentX(TOP_ALIGNMENT);
+        personPanel2.setAlignmentX(CENTER_ALIGNMENT);
         
         labelPanel2 = new JPanel();
         labelPanel2.setLayout(new BoxLayout(labelPanel2,BoxLayout.Y_AXIS));
@@ -259,13 +262,13 @@ public class BookPanel extends JFrame {
         birthDateLabel.setFont(new Font("Times New Roman",Font.ITALIC,12));
         birthDateLabel.setForeground(Color.blue);
         
-        mailPanel = new JPanel();
-        mailPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        mailPanel.setAlignmentX(CENTER_ALIGNMENT);
+        CFPanel = new JPanel();
+        CFPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        CFPanel.setAlignmentX(CENTER_ALIGNMENT);
         
-        mailLabel = new JLabel("Codice Fiscale:");
-        mailLabel.setFont(new Font("Times New Roman",Font.ITALIC,12));
-        mailLabel.setForeground(Color.blue);
+        CFLabel = new JLabel("Codice Fiscale:");
+        CFLabel.setFont(new Font("Times New Roman",Font.ITALIC,12));
+        CFLabel.setForeground(Color.blue);
         
         radioDateTextPanel = new JPanel();
         radioDateTextPanel.setLayout(new BoxLayout(radioDateTextPanel,BoxLayout.Y_AXIS));
@@ -301,10 +304,54 @@ public class BookPanel extends JFrame {
                 }
             }
         });
+        CFTextField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyPressed(KeyEvent e) {}
+            @Override
+            public void keyReleased(KeyEvent e) {}
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if(CFTextField.getText().length()>=16) {e.consume();}
+            }
+        });
         
+        /* RESIDENZA PANEL */
         
+        residenzaPanel = new JPanel();
+        residenzaPanel.setLayout(new WrapLayout(FlowLayout.CENTER));
+        residenzaPanel.setBorder(BorderFactory.createTitledBorder("Dettagli sulla residenza"));
         
+        resPanel1 = new JPanel();
+        resPanel1.setLayout(new FlowLayout(FlowLayout.LEADING));
+        resPanel1.setAlignmentX(TOP_ALIGNMENT);
         
+        labelPanel3 = new JPanel();
+        labelPanel3.setLayout(new BoxLayout(labelPanel3,BoxLayout.Y_AXIS));
+        labelPanel3.setAlignmentX(RIGHT_ALIGNMENT);
+        
+        viaPanel = new JPanel();
+        viaPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        viaPanel.setAlignmentX(CENTER_ALIGNMENT);
+        
+        viaLabel = new JLabel("Via:");
+        viaLabel.setFont(labelFont);
+        viaLabel.setForeground(Color.blue);
+        
+        cittàPanel = new JPanel();
+        cittàPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        cittàPanel.setAlignmentX(CENTER_ALIGNMENT);
+        
+        cittàLabel = new JLabel("Città:");
+        cittàLabel.setFont(labelFont);
+        cittàLabel.setForeground(Color.blue);
+        
+        mailPanel = new JPanel();
+        mailPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        mailPanel.setAlignmentX(CENTER_ALIGNMENT);
+        
+        mailLabel = new JLabel("E-Mail:");
+        mailLabel.setFont(labelFont);
+        mailLabel.setForeground(Color.blue);
         
         
         
@@ -326,16 +373,16 @@ public class BookPanel extends JFrame {
         labelPanel1.add(namePanel);
         labelPanel1.add(surnamePanel);
         labelPanel1.add(birthCityPanel);
-        textPanel.add(nameTextField);
-        textPanel.add(surnameTextField);
-        textPanel.add(birthCityTextField);
+        textPanel1.add(nameTextField);
+        textPanel1.add(surnameTextField);
+        textPanel1.add(birthCityTextField);
         
         sexPanel.add(sexLabel);
         birthDatePanel.add(birthDateLabel);
-        mailPanel.add(mailLabel);
+        CFPanel.add(CFLabel);
         labelPanel2.add(sexPanel);
         labelPanel2.add(birthDatePanel);
-        labelPanel2.add(mailPanel);
+        labelPanel2.add(CFPanel);
         radioPanel.add(maleRadio);
         radioPanel.add(femaleRadio);
         radioDateTextPanel.add(radioPanel);
@@ -343,12 +390,23 @@ public class BookPanel extends JFrame {
         radioDateTextPanel.add(CFTextField);
         
         personPanel1.add(labelPanel1);
-        personPanel1.add(textPanel);
+        personPanel1.add(textPanel1);
         personPanel2.add(labelPanel2);
         personPanel2.add(radioDateTextPanel);
         
         anagrafePanel.add(personPanel1);
         anagrafePanel.add(personPanel2);
+        
+        viaPanel.add(viaLabel);
+        labelPanel3.add(viaPanel);
+        cittàPanel.add(cittàLabel);
+        labelPanel3.add(cittàPanel);
+        mailPanel.add(mailLabel);
+        labelPanel3.add(mailPanel);
+        
+        resPanel1.add(labelPanel3);
+        
+        residenzaPanel.add(resPanel1);
         
         mealPanel.add(mealLabel);
         mealPanel.add(mealBox);
@@ -366,6 +424,7 @@ public class BookPanel extends JFrame {
         
         centralPanel.add(infoLabel);
         centralPanel.add(anagrafePanel);
+        centralPanel.add(residenzaPanel);
         centralPanel.add(detailPanel);
         
         content.add(centralPanel,BorderLayout.CENTER);
@@ -389,7 +448,7 @@ public class BookPanel extends JFrame {
     private JPanel magazinePanel;
     
     
-    private JPanel anagrafePanel;   //flowlayout
+    private JPanel anagrafePanel;   //wraplayout
         private JPanel personPanel1;     //flowlayout
             private JPanel labelPanel1;  //boxLayout
                 private JPanel namePanel;       //flowlayout
@@ -398,7 +457,7 @@ public class BookPanel extends JFrame {
                     private JLabel surnameLabel;  
                 private JPanel birthCityPanel;  //flowlayout
                     private JLabel birthCityLabel;
-            private JPanel textPanel;                    
+            private JPanel textPanel1;                    
                 private JTextField nameTextField;
                 private JTextField surnameTextField;
                 private JTextField birthCityTextField;
@@ -408,8 +467,8 @@ public class BookPanel extends JFrame {
                     private JLabel sexLabel;
                 private JPanel birthDatePanel;
                     private JLabel birthDateLabel;
-                private JPanel mailPanel;
-                    private JLabel mailLabel;
+                private JPanel CFPanel;
+                    private JLabel CFLabel;
             private JPanel radioDateTextPanel;
                 private JPanel radioPanel;
                     private JRadioButton maleRadio;
@@ -418,6 +477,30 @@ public class BookPanel extends JFrame {
                 private JTextField CFTextField;
                 
     private JPanel residenzaPanel;  //flowLayout
+        private JPanel resPanel1;
+            private JPanel labelPanel3;
+                private JPanel viaPanel;
+                    private JLabel viaLabel;
+                private JPanel cittàPanel;
+                    private JLabel cittàLabel;
+                private JPanel mailPanel;
+                    private JLabel mailLabel;
+            private JPanel textPanel2;
+                private JTextField viaTextField;
+                private JTextField cittàTextField;
+                private JTextField mailTextField;
+        private JPanel resPanel2;
+            private JPanel labelPanel4;
+                private JPanel numeroPanel;
+                    private JLabel numeroLabel;
+                private JPanel provinciaPanel;
+                    private JLabel provinciaLabel;
+                private JPanel capPanel;
+                    private JLabel capLabel;
+            private JPanel textPanel3;
+                private JTextField numeroTextField;
+                private JTextField provinciaTextField;
+    
                 
     private JLabel infoLabel;
     private JLabel priceLabel;
@@ -429,7 +512,7 @@ public class BookPanel extends JFrame {
     private JCheckBox animalBox;
     private JCheckBox luggageBox;
     private JCheckBox magazineBox;
-    
+    private Font labelFont = new Font("Times New Roman",Font.ITALIC,12);
     
     
     
