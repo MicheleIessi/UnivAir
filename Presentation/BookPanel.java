@@ -35,6 +35,7 @@ import org.jdesktop.swingx.JXDatePicker;
 import univair.Entity.Flight;
 import univair.Entity.Route;
 
+
 /**
  *
  * @author Michele
@@ -74,7 +75,7 @@ public class BookPanel extends JFrame {
         }
         this.setBounds(400, 70, 400, 600);
         this.setMinimumSize(new Dimension(550,600));
-        this.setPreferredSize(new Dimension(600,768));
+        this.setPreferredSize(new Dimension(550,768));
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         BorderLayout border = new BorderLayout();
         Container content = this.getContentPane();
@@ -138,7 +139,7 @@ public class BookPanel extends JFrame {
                 
         
         anagrafePanel = new JPanel();
-        anagrafePanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+        anagrafePanel.setLayout(new WrapLayout(FlowLayout.CENTER));
         
         personPanel1 = new JPanel();
         personPanel1.setLayout(new FlowLayout(FlowLayout.LEADING));
@@ -262,7 +263,7 @@ public class BookPanel extends JFrame {
         mailPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         mailPanel.setAlignmentX(CENTER_ALIGNMENT);
         
-        mailLabel = new JLabel("E-Mail:");
+        mailLabel = new JLabel("Codice Fiscale:");
         mailLabel.setFont(new Font("Times New Roman",Font.ITALIC,12));
         mailLabel.setForeground(Color.blue);
         
@@ -282,21 +283,21 @@ public class BookPanel extends JFrame {
         
         datePicker = new JXDatePicker(new Date());
         
-        mailTextField = new JTextField("E-Mail");
-        mailTextField.setForeground(Color.lightGray);
-        mailTextField.addFocusListener(new FocusListener() {
+        CFTextField = new JTextField("Codice Fiscale");
+        CFTextField.setForeground(Color.lightGray);
+        CFTextField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if("E-Mail".equals(mailTextField.getText())) {
-                    mailTextField.setText("");
-                    mailTextField.setForeground(Color.black);
+                if("Codice Fiscale".equals(CFTextField.getText())) {
+                    CFTextField.setText("");
+                    CFTextField.setForeground(Color.black);
                 }
             }
             @Override
             public void focusLost(FocusEvent e) {
-                if("".equals(mailTextField.getText())) {
-                    mailTextField.setText("E-Mail");
-                    mailTextField.setForeground(Color.lightGray);
+                if("".equals(CFTextField.getText())) {
+                    CFTextField.setText("Codice Fiscale");
+                    CFTextField.setForeground(Color.lightGray);
                 }
             }
         });
@@ -339,7 +340,7 @@ public class BookPanel extends JFrame {
         radioPanel.add(femaleRadio);
         radioDateTextPanel.add(radioPanel);
         radioDateTextPanel.add(datePicker);
-        radioDateTextPanel.add(mailTextField);
+        radioDateTextPanel.add(CFTextField);
         
         personPanel1.add(labelPanel1);
         personPanel1.add(textPanel);
@@ -414,7 +415,9 @@ public class BookPanel extends JFrame {
                     private JRadioButton maleRadio;
                     private JRadioButton femaleRadio;
                 private JXDatePicker datePicker;
-                private JTextField mailTextField;
+                private JTextField CFTextField;
+                
+    private JPanel residenzaPanel;  //flowLayout
                 
     private JLabel infoLabel;
     private JLabel priceLabel;
