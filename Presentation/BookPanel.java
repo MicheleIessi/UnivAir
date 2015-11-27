@@ -11,6 +11,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -20,12 +22,17 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -34,6 +41,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.jdesktop.swingx.JXDatePicker;
+import univair.Control.BookControl;
 import univair.Entity.Flight;
 import univair.Entity.Route;
 
@@ -45,8 +53,6 @@ import univair.Entity.Route;
 public class BookPanel extends JFrame {
     
     public BookPanel(HashMap map){
-        
-        
         initComponents(map);
         this.setVisible(true);
     }
@@ -75,7 +81,7 @@ public class BookPanel extends JFrame {
         } catch(IOException ex) {
             System.out.println("Immagine non trovata - airunivaqicon.png");
         }
-        this.setBounds(400, 70, 400, 600);
+        this.setBounds(400, 20, 400, 600);
         this.setMinimumSize(new Dimension(560,700));
         this.setPreferredSize(new Dimension(560,768));
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -442,6 +448,57 @@ public class BookPanel extends JFrame {
         priceLabel = new JLabel("00.00");
         priceLabel.setFont(new Font("Times New Roman",Font.BOLD,14));
         
+        /* PRENOTAZIONE */
+        buttonPanel = new JPanel(new WrapLayout(FlowLayout.CENTER));
+        buttonPanel.setAlignmentX(CENTER_ALIGNMENT);
+        bookButton = new JButton("Prenota");
+        bookButton.setSize(50, 20);
+        bookButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                HashMap<String,Object> persona = new HashMap();
+                    persona.put("nome", nameTextField.getText());
+                    persona.put("cognome", surnameTextField.getText());
+                    persona.put("datanascita", datePicker.getDate()); //è una data da formattare nel formato yyyy-mm-dd
+                    String sex = "";
+                    for(Enumeration<AbstractButton> buttons = mf.getElements(); buttons.hasMoreElements();) {
+                        AbstractButton button = buttons.nextElement();
+                        if(button.isSelected()) 
+                            sex = button.getText();
+                    }
+                    persona.put("sesso", sex);
+                    persona.put("codice fiscale", CFTextField.getText());
+                    persona.put("email",mailTextField.getText());
+                    persona.put("luogo di nascita", birthCityTextField.getText());
+                    persona.put("città di residenza", cittàTextField.getText());
+                    persona.put("via", viaTextField.getText());
+                    persona.put("numero civico", numeroTextField.getText());
+                    persona.put("cap", capTextField.getText());
+                    persona.put("provincia", provinciaTextField.getText());
+
+                    HashMap<String,Object> prenotazione = new HashMap();
+                    prenotazione.put("idvolo", map.get("ID"));
+                    prenotazione.put("datavolo", map.get("date")); //date è una stringa già formattata yyyy-mm-dd
+                    String classe = "";
+                    for(Enumeration<AbstractButton> buttons = fs.getElements(); buttons.hasMoreElements();) {
+                        AbstractButton button = buttons.nextElement();
+                        if(button.isSelected()) 
+                            classe = button.getText();
+                    }
+                    prenotazione.put("classe",classe);
+                    prenotazione.put("pasto",mealBox.isSelected());
+                    prenotazione.put("animale",animalBox.isSelected());
+                    prenotazione.put("bagaglio",luggageBox.isSelected());
+                    prenotazione.put("riviste",magazineBox.isSelected());
+                    
+                try {
+                    new BookControl(persona,prenotazione);
+                } catch (SQLException ex) {
+                    Logger.getLogger(BookPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
         //</editor-fold>
         
         //<<editor-fold desc="Costruisco la JFrame inserendo gli elementi tra loro">
@@ -510,22 +567,21 @@ public class BookPanel extends JFrame {
         /* DETTAGLI SUL PREZZO */
         pricePanel.add(priceInfoLabel);
         pricePanel.add(priceLabel);
+        /* BUTTON DI CONFERMA */
+        buttonPanel.add(bookButton);
         /* ASSEMBLAGGIO FINALE */
         centralPanel.add(infoLabel);
         centralPanel.add(anagrafePanel);
         centralPanel.add(residenzaPanel);
         centralPanel.add(detailPanel);
         centralPanel.add(pricePanel);
+        centralPanel.add(buttonPanel);
 
         content.add(imagePanel,BorderLayout.NORTH);        
         content.add(centralPanel,BorderLayout.CENTER);
     //</editor-fold>
         
     }
-    
-    
-    
-    
     
     private JPanel imagePanel;
     private JPanel centralPanel;
@@ -594,6 +650,8 @@ public class BookPanel extends JFrame {
         private JPanel pricePanel;                  //wraplayout
             private JLabel priceInfoLabel;
             private JLabel priceLabel;
+        private JPanel buttonPanel;                 //wraplayout
+            private JButton bookButton;
     
     //font per le label
     private Font labelFont = new Font("Times New Roman",Font.ITALIC,12);   

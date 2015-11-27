@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import univair.Control.BookControl;
+import univair.Control.ResultControl;
 import univair.Entity.Route;
 
 /**
@@ -133,7 +133,7 @@ public class ResultPanel extends JFrame {
     public void bookButtonAction(java.awt.event.ActionEvent evt) {
         HashMap map = (HashMap) resultList.getSelectedValue();
         
-        new BookControl(map);
+        new ResultControl(map);
     }
         /* attributi di swing */
     private JPanel imagePanel;

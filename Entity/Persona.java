@@ -13,12 +13,28 @@ import java.util.HashMap;
 import java.util.Map;
 import univair.Foundation.FConnect;
 /**
- *
+ * La classe Persona rappresenta una persona e contiene parametri relativi alle
+ * sue generalità anagrafiche
  * @author Michele
  */
+
 public class Persona implements DBInterface {
     /* costruttori */
+    /**
+     * Crea una Persona con i parametri settati a null.
+     */
     public Persona() {};
+    /**
+     * Crea una Persona con i seguenti parametri
+     * @param n il nome
+     * @param c il cognome
+     * @param d la data di nascita (di tipo GregorianCalendar)
+     * @param s il sesso (M o F)
+     * @param cf il codice fiscale
+     * @param e l'email
+     * @param ln la città di nascita
+     * @param lr l'indirizzo di residenza (di tipo Address)
+     */
     public Persona(String n, String c, GregorianCalendar d, String s, String cf, String e, String ln, Address lr) {
         if(controlField(n, "alpha") && controlField(c, "alpha") && controlField(s, "sex") && cf.length()==16 && controlField(ln, "alpha")) {
             this.nome = n;
@@ -33,23 +49,100 @@ public class Persona implements DBInterface {
         else throw new IllegalArgumentException("Uno o più valori in input sono errati");
     }
     /* getter & setter */
-    public String getNome()    { return this.nome; }
+    /**
+     * Ritorna il nome della Persona
+     * @return il nome della Persona
+     */
+    public String getNome() { return this.nome; }
+    /**
+     * Ritorna il cognome della Persona
+     * @return il cognome della Persona
+     */
     public String getCognome() { return this.cognome; }
-    public GregorianCalendar getDDN()       { return this.ddn; }
+    /**
+     * Ritorna la data di nascita della Persona in un GregorianCalendar
+     * @return la data di nascita della Persona
+     */
+    public GregorianCalendar getDDN() { return this.ddn; }
+    /**
+     * Ritorna il sesso della Persona
+     * @return il sesso della Persona
+     */
     public String getSex()     { return this.sex; }
+    /**
+     * Ritorna il codice fiscale della Persona
+     * @return il codice fiscale della Persona
+     */
     public String getCF()      { return this.CF; }
+    /**
+     * Ritorna l'email della Persona
+     * @return l'email della Persona
+     */
     public String getEmail()   { return this.email; }
+    /**
+     * Ritorna il luogo di nascita della Persona
+     * @return il luogo di nascita della Persona
+     */
     public String getLDN()     { return this.ldn; }
+    /** 
+     * Ritorna il luogo di residenza della persona in un Address
+     * @return il luogo di residenza della persona in un Address
+     */
     public Address getLDR()    { return this.ldr; }
+    /**
+     * Imposta il nome della Persona
+     * @param n il nome che si vuole impostare
+     */
     public void setNome(String n)           { this.nome = n; }
+    /** 
+     * Imposta il cognome della Persona
+     * @param c il cognome che si vuole impostare
+     */
     public void setCognome(String c)        { this.cognome = c; }
+    /** 
+     * Imposta la data di nascita della Persona
+     * @param d la data di nascita che si vuole impostare
+     */
     public void setDDN(GregorianCalendar d) { this.ddn = d; }
+    /** 
+     * Imposta il sesso della Persona
+     * @param s il sesso che si vuole impostare
+     */
     public void setSec(String s)            { this.sex = s; }
+    /**
+     * Imposta il codice fiscale della Persona
+     * @param cf il codice fiscale che si vuole impostare
+     */
     public void setCF(String cf)            { this.CF = cf; }
+    /** 
+     * Imposta l'email della Persona
+     * @param e l'email che si vuole impostare
+     */
     public void SetEmail(String e)          { this.email = e; }
+    /** 
+     * Imposta il luogo di nascita della Persona
+     * @param ln il luogo di nascita che si vuole impostare
+     */
     public void setLDN(String ln)           { this.ldn = ln; }
+    /** 
+     * Imposta il luogo di residenza
+     * @param lr il luogo di residenza che si vuole impostare
+     */
     public void setLDR(Address lr)          { this.ldr = lr; }
     /* metodi di classe */
+    /**
+     * Il metodo controlField controlla l'esatta impostazione di diversi attributi
+     * della Persona in base a tre criteri che l'utente deve scegliere
+     * @param s la stringa che si deve controllare
+     * @param tipo indica i criteri di controllo e può essere di tre tipi:<br>
+     * - alpha : serve per controllare che i campi Nome, Cognome e Luogo di Nascita
+     * non contengano alcun numero;<br>
+     * - digit : serve per controllare che i campi con valori prettamente numerici
+     * non contengano caratteri non numerici;<br>
+     * - sex: serve per controllare che il sesso sia un carattere tra 'm','M','f'
+     * o 'F'.
+     * @return 
+     */
     public static boolean controlField(String s, String tipo) {
         char[] c = s.toCharArray();
         boolean esito = true;
@@ -75,8 +168,19 @@ public class Persona implements DBInterface {
         return esito;
     }
     /* metodi per il DB */
+    /**
+     * Il metodo getDateString converte la data di nascita della Persona in una 
+     * stringa formattata secondo il pattern yyyy-mm-dd.
+     * @return una stringa "traduzione" della data di nascita della Persona.
+     */
     public String getDateString() {
-        return (this.ddn.get(1)+1900) + "-" + (this.ddn.get(2)+1) + "-" + this.ddn.get(5);    }
+        return (this.ddn.get(1)+1900) + "-" + (this.ddn.get(2)+1) + "-" + this.ddn.get(5);}
+    /**
+     * Il metodo getDateFromString è il duale di getDateString e converte una 
+     * stringa formattata secondo un pattern yyyy-mm-dd in un GregorianCalendar
+     * @param date la stringa da convertire
+     * @return il GregorianCalendar corrispondente alla stringa
+     */
     private GregorianCalendar getDateFromString(String date) {
         int year = Integer.parseInt(date.substring(0, 4))-1900;
         int month = Integer.parseInt(date.substring(5, 7))-1;
@@ -102,6 +206,15 @@ public class Persona implements DBInterface {
         this.SetEmail(eml.trim());
         this.setLDN(nsc.trim());
         this.setLDR(rsd);      
+    }
+    public static int getIDIfExists(String CF) throws SQLException {
+        FConnect con = new FConnect();
+        ResultSet rs = con.load(table, "codfis = '" + CF + "'");
+        int ID = 0;
+        if(rs.last()) {
+            ID = rs.getInt(1);
+        }
+        return ID;
     }
     /**
      * Il metodo retrieve restituisce una map contenente i dati caricati dal

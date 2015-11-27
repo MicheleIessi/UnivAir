@@ -10,8 +10,18 @@ package univair.Entity;
  * @author Michele
  */
 public class Address {
-    /* costruttori */
+    /**
+     * Crea un Address (indirizzo) con i parametri settati a null.
+     */
     public Address() {};
+    /**
+     * Crea un Address (indirizzo) con i seguenti parametri:
+     * @param ci la città
+     * @param v la via
+     * @param n il numero civico
+     * @param c il CAP
+     * @param p la provincia
+     */
     public Address(String ci, String v, String n, String c, String p) {
         this.città = ci;
         this.via = v;

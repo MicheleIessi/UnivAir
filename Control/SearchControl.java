@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import univair.Entity.Flight;
 import univair.Entity.Route;
-import univair.Presentation.ErrorFrame;
+import univair.Presentation.MessageFrame;
 import univair.Presentation.ResultPanel;
 
 /**
@@ -31,7 +31,7 @@ public class SearchControl {
             ArrayList list = Flight.getFlightsFromRouteID(id);
             ResultPanel rp = new ResultPanel(list,r,dat);
         } catch (IllegalArgumentException | SQLException e) {
-            new ErrorFrame(e.getMessage(), 0);
+            new MessageFrame(e.getMessage(), 0);
         }
     }
     
@@ -42,9 +42,5 @@ public class SearchControl {
         int day = Integer.parseInt(date.substring(8, date.length()));
         gc.set(year, month, day);
         return gc;
-    }
-
-
-
-    
+    }   
 }

@@ -13,9 +13,18 @@ import javax.swing.JPanel;
  *
  * @author Michele
  */
-public class ErrorFrame {
-    
-    public ErrorFrame(String desc, int errtype) {
+public class MessageFrame {
+    /**
+     * Crea una Message Frame del tipo desiderato con una stringa per descrivere 
+     * il tipo di messaggio
+     * @param desc la descrizione del messaggio
+     * @param errtype valore intero per specificare il tipo di messaggio <br>
+     * 
+     *  0 : messaggio di errore <br>
+     *  1 : messaggio informativo <br>
+     *  2 : messaggio di avvertimento 
+     */
+    public MessageFrame(String desc, int errtype) {
         String title = getErrorTitle(errtype);
         JPanel panel = new JPanel();
         JOptionPane.showMessageDialog(panel, desc, title, errtype);
