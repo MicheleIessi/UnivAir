@@ -207,6 +207,26 @@ public class Persona implements DBInterface {
         this.setLDN(nsc.trim());
         this.setLDR(rsd);      
     }
+    public void createFromCF(String cf) throws SQLException {
+        FConnect con = new FConnect();
+        ResultSet rs = con.load(table, "codfis = '" + cf.trim() +"'");
+        while(rs.next()) {
+            String nom = rs.getString(2).trim();
+            String cog = rs.getString(3).trim();
+            GregorianCalendar dat = getDateFromString(rs.getString(4));
+            String sec = rs.getString(5);
+            String mail = rs.getString(7);
+            String ldnas = rs.getString(8);
+            Address add = new Address(rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13));
+            this.setNome(nom);
+            this.setCognome(cog);
+            this.setDDN(dat);
+            this.setSec(sec);
+            this.SetEmail(mail);
+            this.setLDN(ldnas);
+            this.setLDR(add);
+        }
+    }
     public static int getIDIfExists(String CF) throws SQLException {
         FConnect con = new FConnect();
         ResultSet rs = con.load(table, "codfis = '" + CF + "'");
@@ -228,7 +248,7 @@ public class Persona implements DBInterface {
     public Map retrieve(int id) throws SQLException {
         FConnect con = new FConnect();
         ResultSet rs = con.load(table, condition + Integer.toString(id));
-        Map<String,Object> map = new HashMap<>();
+        HashMap<String,Object> map = new HashMap<>();
         while(rs.next()) {
             map = new HashMap<>();
             map.put("id", Integer.toString(rs.getInt(1)));
@@ -249,8 +269,7 @@ public class Persona implements DBInterface {
         FConnect con = new FConnect();
         ArrayList<String> values = new ArrayList<>();
         boolean cf = con.exists(table, "codfis", this.CF);
-        boolean em = con.exists(table, "email", this.email);
-        if(cf || em) {
+        if(cf) {
             System.out.println("persona già presente nel db con lo stesso cf o mail gestire error frame Persona.store()");
         }
         else {
@@ -291,13 +310,13 @@ public class Persona implements DBInterface {
     /* metodi di debug */
     @Override
     public String toString() {
-        return  "nome: "                + this.nome                                                                  + "; " +
-                "cognome: "             + this.cognome                                                               + "; " +
+        return  "nome: "                + this.nome.trim()                                                           + "; " +
+                "cognome: "             + this.cognome.trim()                                                        + "; " +
                 "data: "                + (this.ddn.get(1)+1900) + "-" + (this.ddn.get(2)+1) + "-" + this.ddn.get(5) + "; " +
-                "sesso: "               + this.sex                                                                   + "; " +
-                "CF: "                  + this.CF                                                                    + "; " +
-                "mail: "                + this.email                                                                 + "; " +
-                "città di nascita: "    + this.ldn                                                                   + "; " +
+                "sesso: "               + this.sex.trim()                                                            + "; " +
+                "CF: "                  + this.CF.trim()                                                             + "; " +
+                "mail: "                + this.email.trim()                                                          + "; " +
+                "città di nascita: "    + this.ldn.trim()                                                            + "; " +
                 "città di residenza: "  + this.ldr.getCittà().trim()                                                 + "; " +
                 "via: "                 + this.ldr.getVia().trim()                                                   + "; " +
                 "numero: "              + this.ldr.getNumero().trim()                                                + "; " +

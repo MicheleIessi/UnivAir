@@ -250,6 +250,9 @@ public class BookPanel extends JFrame {
                 if(CFTextField.getText().length()>=16) {e.consume();}
             }
         });   
+        codiceFiscaleLabel = new JLabel("Se hai già usato questo servizio in precedenza, puoi inserire solo il codice fiscale");
+        codiceFiscaleLabel.setFont(labelFont);
+        codiceFiscaleLabel.setForeground(Color.red);
         
         /* RESIDENZA PANEL */   
         residenzaPanel = new JPanel(new WrapLayout(FlowLayout.CENTER));
@@ -474,7 +477,7 @@ public class BookPanel extends JFrame {
                     persona.put("via", viaTextField.getText());
                     persona.put("numero civico", numeroTextField.getText());
                     persona.put("cap", capTextField.getText());
-                    persona.put("provincia", provinciaTextField.getText());
+                    persona.put("provincia", provinciaTextField.getText()); //persona contiene 12 objects
 
                     HashMap<String,Object> prenotazione = new HashMap();
                     prenotazione.put("idvolo", map.get("ID"));
@@ -489,7 +492,7 @@ public class BookPanel extends JFrame {
                     prenotazione.put("pasto",mealBox.isSelected());
                     prenotazione.put("animale",animalBox.isSelected());
                     prenotazione.put("bagaglio",luggageBox.isSelected());
-                    prenotazione.put("riviste",magazineBox.isSelected());
+                    prenotazione.put("riviste",magazineBox.isSelected()); //prenotazione contiene 7 objects
                     
                 try {
                     new BookControl(persona,prenotazione);
@@ -530,6 +533,7 @@ public class BookPanel extends JFrame {
         personPanel2.add(radioDateTextPanel);        
         anagrafePanel.add(personPanel1);
         anagrafePanel.add(personPanel2);
+        anagrafePanel.add(codiceFiscaleLabel);
         /* RESIDENZA */
         viaPanel.add(viaLabel);
         cittàPanel.add(cittàLabel);
@@ -613,6 +617,7 @@ public class BookPanel extends JFrame {
                         private JRadioButton femaleRadio;
                     private JXDatePicker datePicker;
                     private JTextField CFTextField;
+            private JLabel codiceFiscaleLabel;
         private JPanel residenzaPanel;              //wrapLayout
             private JPanel resPanel1;               //flowlayout
                 private JPanel labelPanel3;         //boxlayout

@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.Date;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
 import org.jdesktop.swingx.JXDatePicker;
 import univair.Control.SearchControl;
 import univair.Entity.City;
