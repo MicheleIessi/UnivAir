@@ -20,6 +20,16 @@ import univair.Foundation.FConnect;
 public class Flight {
     /* costruttori */
     public Flight() {};
+    /**
+     * Il costruttore Flight() costruisce un nuovo oggetto Flight prendendo come
+     * input una Route(tratta), un ID, un array di Employer, un numero di posti
+     * e una data di partenza
+     * @param r La tratta alla quale appartiene il volo
+     * @param id L'ID del volo appena creato
+     * @param e Array di Employer che specifica l'equipaggio
+     * @param s Il numero di posti disponibili
+     * @param d La data di partenza.
+     */
     public Flight(Route r, String id, Employer[] e, int s, GregorianCalendar d) {
         controlCrew(e);
         this.route = r;
@@ -40,6 +50,11 @@ public class Flight {
     public void setCrew(Employer[] e) { this.crew = e; }
     public void setSeats(int s)       { this.seats = s; }
     public void setDate(GregorianCalendar d)       { this.date = d; }
+    /**
+     * Il metodo getDateString() converte la data di partenza del volo in una 
+     * stringa formattata secondo il pattern yyyy-mm-dd.
+     * @return una stringa "traduzione" della data di partenza del volo.
+     */
     public String getDateString() {
         return (this.date.get(1)+1900) + "-" + (this.date.get(2)+1) + "-" + this.date.get(5);    }
     public void setPilot(Employer e)   { this.crew[0] = e; }
@@ -48,6 +63,12 @@ public class Flight {
     public void setHost2(Employer e)   { this.crew[3] = e; }
     public void setHost3(Employer e)   { this.crew[4] = e; }
     /* metodi di classe */
+    /**
+     * Il metodo controlCrew() effettua un controllo su un array di Employer per
+     * verificare che sia presente un Employer di tipo 'Pilot', uno di tipo 
+     * 'Copilot' e 3 di tipo 'Hostess'.
+     * @param e L'array di Employer su cui fare il controllo.
+     */
     public static void controlCrew(Employer[] e) {
         if(!e[0].type.equals("Pilot")) throw new IllegalArgumentException("Errore, pilota mancante");
         if(!e[1].type.equals("Copilot")) throw new IllegalArgumentException("Errore, copilota mancante");
@@ -56,16 +77,39 @@ public class Flight {
         if(!e[4].type.equals("Hostess")) throw new IllegalArgumentException("Errore, hostess 3 mancante");
     }
     /* metodi per il DB */
-    private static GregorianCalendar getDateFromString(String date) {
+    /**
+     * Il metodo getDateFromString crea un oggetto GregorianCalendar a partire
+     * da una stringa formattata secondo il pattern yyyy-mm-dd.
+     * @param date La stringa che si vuole convertire
+     * @return Un GregorianCalendar equivalente alla stringa convertita
+     */
+    private GregorianCalendar getDateFromString(String date) {
         int year = Integer.parseInt(date.substring(0, 4))-1900;
         int month = Integer.parseInt(date.substring(5, 7))-1;
         int day = Integer.parseInt(date.substring(8, date.length()));
         return new GregorianCalendar(year, month, day);
     }
+    /**
+     * Il metodo getStringFromDate è il duale di getDateFromString e converte un
+     * GregorianCalendar dato come input in una stringa formattata secondo il 
+     * pattern yyyy-mm-dd.
+     * @param gc Il GregorianCalendar che si vuole convertire
+     * @return Una stringa formattata secondo il pattern yyyy-mm-dd equivalente 
+     * al GregorianCalendar in inputs
+     */
     private String getStringFromDate(GregorianCalendar gc) {
         String dat = (gc.get(1)+1900) + "-" + (gc.get(2)+1) + "-" + gc.get(5);
         return dat;
     }
+    /**
+     * Il metodo createFromDB crea un oggetto dal Database prendendo come input
+     * un intero che rappresenta l'ID. L'ID è la chiave primaria delle tabelle 
+     * corrispondenti alle classi che implementano questa interfaccia. Usa il 
+     * metodo retrieve() per recuperare la Map dalla cui poi si crea l'oggetto.
+     * @param id L'ID del volo da cercare
+     * @param gc La data di decollo del volo
+     * @throws SQLException 
+     */
     public void createFromDB(int id, GregorianCalendar gc) throws SQLException {
         Map<String,Object> map = retrieve(id, gc);
         Route r = (Route) map.get("route");
@@ -78,6 +122,7 @@ public class Flight {
         this.setDate(dat);
         this.setCrew(e);
         this.setSeats(s);
+        
     }
     public Employer[] getEmployersFromDB(int id, GregorianCalendar gc) throws SQLException, IllegalArgumentException {
         FConnect con = new FConnect();
@@ -105,6 +150,7 @@ public class Flight {
         hostess2.createFromDB(e4);
         hostess3.createFromDB(e5);
         Employer[] e = {pilot,copilot,hostess1,hostess2,hostess3};
+        con.close();
         return e;
     }
     public static int getRouteID(int id) throws SQLException {
@@ -114,6 +160,7 @@ public class Flight {
         int rt = 0;
         while(rs.next())
              rt = rs.getInt(3);
+        con.close();
         return rt;
     }
     public static ArrayList getFlightsFromRouteID(int id) throws SQLException {
@@ -128,10 +175,12 @@ public class Flight {
             map.put("seats", rs.getInt(4));
             list.add(map);
         }
-        System.out.println(list.size());
+        //System.out.println(list.size());
         if(list.isEmpty()) {
+            con.close();
             throw new SQLException("Nessun risultato trovato per la tratta richiesta");
         }
+        con.close();
         return list;
     }
     public Map retrieve(int id, GregorianCalendar gc) throws SQLException {
@@ -150,6 +199,7 @@ public class Flight {
             map.put("crew", e);
             map.put("seats", rs.getInt(4));
         }
+        con.close();
         return map;
     }
     public void store() throws SQLException {
@@ -164,8 +214,10 @@ public class Flight {
             con.store(table, values);    
         }
         else {
+            con.close();
             System.out.println("volo con stesse keys già presente nel db GESTIRE ERROR FRAME Flight.store()");
         }
+        con.close();
     }
     /* attributi */
     private Route route;

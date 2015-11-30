@@ -25,11 +25,17 @@ public class MessageFrame {
      *  2 : messaggio di avvertimento 
      */
     public MessageFrame(String desc, int errtype) {
-        String title = getErrorTitle(errtype);
+        String title = getMessageTitle(errtype);
         JPanel panel = new JPanel();
         JOptionPane.showMessageDialog(panel, desc, title, errtype);
     }
-    private String getErrorTitle(int errtype) {
+    /**
+     * Il metodo getMessageTitle restituisce una stringa descrivente il tipo di 
+     * messaggio nella MessageFrame in base al numero intero fornito in ingresso.
+     * @param errtype Il numero intero fornito in ingresso
+     * @return La stringa descrivente il tipo di messaggio
+     */
+    private String getMessageTitle(int errtype) {
         String res;
         switch(errtype) {
             case 0: res = "Messaggio di errore"; break;

@@ -29,7 +29,7 @@ public class SearchControl {
             }
             int id = r.getIdFromDB();
             ArrayList list = Flight.getFlightsFromRouteID(id);
-            ResultPanel rp = new ResultPanel(list,r,dat);
+            new ResultPanel(list,r,dat);
         } catch (IllegalArgumentException | SQLException e) {
             new MessageFrame(e.getMessage(), 0);
         }

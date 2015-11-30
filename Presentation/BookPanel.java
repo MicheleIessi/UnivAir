@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,14 +43,10 @@ import javax.swing.JTextField;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.jdesktop.swingx.JXDatePicker;
 import univair.Control.BookControl;
+import univair.Entity.Booking;
 import univair.Entity.Flight;
 import univair.Entity.Route;
 
-
-/**
- *
- * @author Michele
- */
 public class BookPanel extends JFrame {
     
     public BookPanel(HashMap map){
@@ -81,13 +78,28 @@ public class BookPanel extends JFrame {
         } catch(IOException ex) {
             System.out.println("Immagine non trovata - airunivaqicon.png");
         }
-        this.setBounds(400, 20, 400, 600);
-        this.setMinimumSize(new Dimension(560,700));
+        this.setBounds(400, 0, 400, 600);
+        this.setMinimumSize(new Dimension(560,730));
         this.setPreferredSize(new Dimension(560,768));
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         BorderLayout border = new BorderLayout();
         Container content = this.getContentPane();
         content.setLayout(border);
+        volo = new Flight();
+        book = new Booking();
+        String idvolo = (String) map.get("ID");
+        String dat = (String) map.get("date");
+        GregorianCalendar gc = getDateFromString(dat);
+        try {
+            volo.createFromDB(Integer.parseInt(idvolo), gc);
+        } catch (SQLException ex) {throw new IllegalArgumentException("Errore imprevisto");}
+        book.setClss("first");
+        book.setDiscount(0);
+        book.setLuggageSupp(false);
+        book.setMagazinesSupp(false);
+        book.setMealSupp(false);
+        book.setPetSupp(false);
+        book.setPriceRed(false);
         //</editor-fold>
         
         //<editor-fold desc="Creo gli elementi da inserire nella JFrame e ne definisco le proprietà">
@@ -221,7 +233,9 @@ public class BookPanel extends JFrame {
         ButtonGroup mf = new ButtonGroup();
         mf.add(maleRadio);
         mf.add(femaleRadio);    
-        datePicker = new JXDatePicker(new Date());    
+        Date d = new Date();
+        d.setYear(80);
+        datePicker = new JXDatePicker(d);    
         CFTextField = new JTextField("Codice Fiscale");
         CFTextField.setForeground(Color.lightGray);
         CFTextField.addFocusListener(new FocusListener() {
@@ -421,26 +435,127 @@ public class BookPanel extends JFrame {
         radioClassPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         radioClassPanel.setAlignmentX(LEFT_ALIGNMENT);
         firstRadio = new JRadioButton("Prima classe",true);
+        firstRadio.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                book.setClss("first");
+                aggiornaPrezzo(0);
+            }
+        });
         firstRadio.setFont(labelFont);
         firstRadio.setForeground(Color.blue);
         secondRadio = new JRadioButton("Seconda classe");
+        secondRadio.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                book.setClss("second");
+                aggiornaPrezzo(0);
+            }
+        });
         secondRadio.setFont(labelFont);
         secondRadio.setForeground(Color.blue);
         ButtonGroup fs = new ButtonGroup();
         fs.add(firstRadio);
         fs.add(secondRadio);
         mealBox = new JCheckBox("Servizio ristorazione");
+        mealBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(mealBox.isSelected())
+                    book.setMealSupp(true);
+                else book.setMealSupp(false);
+                aggiornaPrezzo(0);
+            }
+        });
         mealBox.setFont(labelFont);
         mealBox.setForeground(Color.blue);
         animalBox = new JCheckBox("Animale a bordo");
+        animalBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(animalBox.isSelected())
+                    book.setPetSupp(true);
+                else book.setPetSupp(false);
+                aggiornaPrezzo(0);
+            }
+        });
         animalBox.setFont(labelFont);
         animalBox.setForeground(Color.blue);
         luggageBox = new JCheckBox("Bagaglio addizionale");
+        luggageBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(luggageBox.isSelected())
+                    book.setLuggageSupp(true);
+                else book.setLuggageSupp(false);
+                aggiornaPrezzo(0);
+            }
+        });
         luggageBox.setFont(labelFont);
         luggageBox.setForeground(Color.blue);
         magazineBox = new JCheckBox("Riviste a scelta");
+        magazineBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(magazineBox.isSelected())
+                    book.setMagazinesSupp(true);
+                else book.setMagazinesSupp(false);
+                aggiornaPrezzo(0);
+            }
+        });
         magazineBox.setFont(labelFont);
         magazineBox.setForeground(Color.blue);
+        discountPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        discountPanel.setAlignmentX(TOP_ALIGNMENT);
+        discountLabel = new JLabel("Sconto:");
+        discountLabel.setFont(labelFont);
+        discountLabel.setForeground(Color.blue);
+        discountTextField = new JTextField("Sconto %",20);
+        discountTextField.setForeground(Color.lightGray);
+        discountTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if("Sconto %".equals(discountTextField.getText())) {
+                    discountTextField.setText("");
+                    discountTextField.setForeground(Color.black);
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                if("".equals(discountTextField.getText())) {
+                    discountTextField.setText("Sconto %");
+                    discountTextField.setForeground(Color.lightGray);
+                }
+            }
+        });
+        discountTextField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if(!Character.isDigit(e.getKeyChar()))
+                    e.consume();
+            }
+            @Override
+            public void keyPressed(KeyEvent e) { }
+            @Override
+            public void keyReleased(KeyEvent e) {
+                try {
+                    if(Double.parseDouble(discountTextField.getText())>100) {
+                    discountTextField.setText("100");
+                    }
+                } catch (NumberFormatException ex) {
+                    discountTextField.setText("");
+                }
+                double disc = 0;
+                try {
+                    disc = Double.parseDouble(discountTextField.getText());
+                } catch(NumberFormatException ex) {}
+                book.setDiscount(disc);
+                aggiornaPrezzo(disc);
+                book.setPrice(Double.parseDouble(priceLabel.getText()));
+                System.out.println(disc);
+                System.out.println(book.getPrice());
+            }
+        });
         
         /* PRICE PANEL */
         pricePanel = new JPanel(new WrapLayout(FlowLayout.CENTER));
@@ -449,6 +564,7 @@ public class BookPanel extends JFrame {
         priceInfoLabel.setFont(new Font("Times New Roman",Font.ITALIC,14));
         priceInfoLabel.setForeground(Color.blue);
         priceLabel = new JLabel("00.00");
+        priceLabel.setText(Double.toString(book.computePrice(volo,0)));
         priceLabel.setFont(new Font("Times New Roman",Font.BOLD,14));
         
         /* PRENOTAZIONE */
@@ -492,8 +608,8 @@ public class BookPanel extends JFrame {
                     prenotazione.put("pasto",mealBox.isSelected());
                     prenotazione.put("animale",animalBox.isSelected());
                     prenotazione.put("bagaglio",luggageBox.isSelected());
-                    prenotazione.put("riviste",magazineBox.isSelected()); //prenotazione contiene 7 objects
-                    
+                    prenotazione.put("riviste",magazineBox.isSelected()); 
+                    prenotazione.put("prezzo",priceLabel.getText());        //prenotazione contiene 8 objects
                 try {
                     new BookControl(persona,prenotazione);
                 } catch (SQLException ex) {
@@ -567,6 +683,9 @@ public class BookPanel extends JFrame {
         detPanel.add(animalBox);
         detPanel.add(luggageBox);
         detPanel.add(magazineBox);
+        discountPanel.add(discountLabel);
+        discountPanel.add(discountTextField);
+        detPanel.add(discountPanel);
         detailPanel.add(detPanel);
         /* DETTAGLI SUL PREZZO */
         pricePanel.add(priceInfoLabel);
@@ -585,6 +704,17 @@ public class BookPanel extends JFrame {
         content.add(centralPanel,BorderLayout.CENTER);
     //</editor-fold>
         
+        
+    }
+    private void aggiornaPrezzo(double dis) {
+        priceLabel.setText(Double.toString(book.computePrice(volo,dis)));
+    }
+    
+    private GregorianCalendar getDateFromString(String date) {
+        int year = Integer.parseInt(date.substring(0, 4))-1900;
+        int month = Integer.parseInt(date.substring(5, 7))-1;
+        int day = Integer.parseInt(date.substring(8, 10));
+        return new GregorianCalendar(year, month, day);
     }
     
     private JPanel imagePanel;
@@ -652,11 +782,19 @@ public class BookPanel extends JFrame {
                 private JCheckBox animalBox;
                 private JCheckBox luggageBox;
                 private JCheckBox magazineBox;
+                private JPanel discountPanel;       //flowlayout
+                    private JLabel discountLabel;
+                    private JTextField discountTextField;
         private JPanel pricePanel;                  //wraplayout
             private JLabel priceInfoLabel;
             private JLabel priceLabel;
         private JPanel buttonPanel;                 //wraplayout
             private JButton bookButton;
+            
+            
+    
+    private Booking book;
+    private Flight volo;
     
     //font per le label
     private Font labelFont = new Font("Times New Roman",Font.ITALIC,12);   

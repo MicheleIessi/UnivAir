@@ -13,23 +13,47 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
- *
+ * La classe FConnect gestisce tutti gli scambi di informazioni tra le classi
+ * Entity e il Database, usando come configurazione le variabili di connessione
+ * contenute all'interno della classe di supporto Config.
  * @author Michele
  */
 public class FConnect {
     static Config con = new Config();
     static Connection db;
 
+    /**
+     * Costruisce un oggetto FConnect e crea una connessione al DB usando come 
+     * parametri di connessione gli attributi della classe Config.
+     * @throws SQLException Se non si riesce a creare una connessione
+     */
     public FConnect() throws SQLException {
         String url = "jdbc:postgresql://"+con.getHost()+":"+con.getPort()+"/"+con.getDB();
         this.db = DriverManager.getConnection(url, con.getDBUsername(), con.getDBPassword());
     }
-    public static void query(String query) throws SQLException {
+    /**
+     * Il metodo query() esegue una query sul Database prendendo come input una stringa
+     * già formattata. Il metodo è usato solo da altri metodi della classe (che
+     * provvedono a formattare la stringa parametro della funzione) e quindi è 
+     * un metodo privato. Il metodo usa il metodo executeUpdate della classe
+     * Statement, quindi è usato solo per query di tipo INSERT/DELETE/UPDATE.
+     * @param query La stringa 
+     * @throws SQLException 
+     */
+    private void query(String query) throws SQLException {
         Statement stmt = db.createStatement();
         stmt.executeUpdate(query);
         stmt.close();
     }
-    
+    /**
+     * Il metodo store() prende in input una stringa e un ArrayList e costruisce
+     * una stringa che poi servirà a fare una query di tipo INSERT usando il 
+     * metodo query() della classe FConnect. La stringa 'table' cambia in base 
+     * alla classe che chiama questo metodo.
+     * @param table La tabella sulla quale effettuare la INSERT.
+     * @param values ArrayList contenente i valori da inserire nel DB.
+     * @throws SQLException 
+     */
     public void store(String table, ArrayList values) throws SQLException {
         int j = values.size();
         String val = "";
@@ -50,8 +74,17 @@ public class FConnect {
         //System.out.println(sql);
         query(sql);
     }
-    
-    
+    /**
+     * Il metodo exists() verifica l'esistenza di una ennupla nel DB usando come
+     * input tre stringhe contenenti la tabella su cui effettuare la query (di 
+     * tipo SELECT), la chiave su cui cercare e il valore da cercare. I primi 2
+     * parametri cambiano a seconda della classe che chiama il metodo.
+     * @param table La tabella su cui effettuare la ricerca
+     * @param key La chiave primaria della tabella
+     * @param value Il valore da cercare
+     * @return true se la ennupla esiste, false altrimenti
+     * @throws SQLException 
+     */
     public boolean exists(String table, String key, String value) throws SQLException {
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         ResultSet rs = stmt.executeQuery("SELECT * FROM " + table + " WHERE " + key + " = '" + value + "'");
@@ -61,7 +94,15 @@ public class FConnect {
         }
         return result;
     }
-    
+    /**
+     * Il metodo existsMultipleKey() è simile al metodo exists() ma pensato per
+     * le tabelle che hanno una chiave primaria composta da due o più attributi.
+     * @param table Stringa contenente la tabella su cui effettuare la ricerca
+     * @param keys Array di stringhe contenente le chiavi della tabella
+     * @param values Array di stringhe contenente i valori da cercare
+     * @return true se la ennupla esiste, false altrimenti
+     * @throws SQLException 
+     */
     public boolean existsMultipleKey(String table, String[] keys, String[] values) throws SQLException {
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         String sql = "";
@@ -79,7 +120,14 @@ public class FConnect {
         }
         return result;
     }
-    
+    /**
+     * Il metodo load() effettua una ricerca sul DB e restituisce un ResultSet
+     * contenente i risultati.
+     * @param table La tabella su cui effettuare la ricerca
+     * @param condition Stringa specificante i parametri della ricerca
+     * @return Un ResultSet contenente il risultato (o i risultati) della ricerca
+     * @throws SQLException 
+     */
     public ResultSet load(String table, String condition) throws SQLException {
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         String sql = "SELECT * FROM " + table + " WHERE " + condition;
@@ -87,7 +135,15 @@ public class FConnect {
         ResultSet rs = stmt.executeQuery(sql);
         return rs;        
     }
-    
+    /**
+     * Il metodo search() è simile al metodo load() ma pensato per le tabelle che
+     * hanno una chiave primaria composta da due o più attributi.
+     * @param table Stringa contenente la tabella su cui effettuare la ricerca
+     * @param keys Array di stringhe contenente le chiavi della tabella
+     * @param values Array di stringhe contenente i valori da cercare
+     * @return Un ResultSet contenente il risultato (o i risultati) della ricerca
+     * @throws SQLException 
+     */
     public ResultSet search(String table, String[] keys, String[] values) throws SQLException {        
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         String cond = "";
@@ -106,10 +162,22 @@ public class FConnect {
         ResultSet rs = stmt.executeQuery(sql);
         return rs;
     }
-    
+    /**
+     * Il metodo delete() effettua una query di tipo DELETE su di una ennupla
+     * del DB.
+     * @param table Stringa contenente la tabella su cui effettuare la query
+     * @param key Stringa contenente la chiave primaria della tabella
+     * @param value Stringa specificante il valore da cercare della ennupla da 
+     *              cancellare
+     * @throws SQLException 
+     */
     public void delete(String table, String key, String value) throws SQLException {
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         String sql = "DELETE FROM " + table + " WHERE " + key + " = " + value;
         stmt.executeUpdate(sql);
+    }
+    
+    public void close() throws SQLException {
+        db.close();
     }
 }

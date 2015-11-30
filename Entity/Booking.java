@@ -38,8 +38,8 @@ public class Booking implements DBInterface {
             this.luggageSupplement = lug;
             this.magazinesSupplement = mgzn;
             this.discount = dis; // percentuale
-            double prc = computePrice(f);
-            this.price = prc*(1-(dis/100));  // prezzo già scontato
+            double prc = computePrice(f,0);
+            this.price = prc;  // prezzo già scontato
         }
     }
     /* getter & setter */
@@ -84,12 +84,7 @@ public class Booking implements DBInterface {
         this.magazinesSupplement = mgzn;
     }
     public void setDiscount(double newDis) {
-        double oldPrc = this.price;
-        double oldDis = this.discount;
-        
-        double newPrc = oldPrc*((100-newDis)/(100-oldDis));
-        this.discount = newDis;
-        this.price = (double) Math.round(newPrc * 100) / 100;   // arrotondamento alla seconda cifra decimale
+        this.discount = newDis;   // arrotondamento alla seconda cifra decimale
     }
     /* metodi di classe */
     private static double distance(double lat1, double lon1, double lat2, double lon2) {
@@ -116,7 +111,7 @@ public class Booking implements DBInterface {
     private boolean controlClass(String c) {
         return (c.toLowerCase().equals("first") || c.toLowerCase().equals("second"));
     }   
-    public double computePrice(Flight f) {
+    public double computePrice(Flight f, double d) {
         String dep = f.getRoute().getDeparture();
         String des = f.getRoute().getDestination();
         double lat1 = City.valueOf(dep).lat();
@@ -131,6 +126,7 @@ public class Booking implements DBInterface {
         if(this.petSupplement) prc += 20;
         if(this.magazinesSupplement) prc += 10;
         if(this.priceReduction) prc *= 0.5;
+        prc = prc*(1-(d/100));
         prc = arrotonda(prc);
         return prc;
     }
@@ -164,7 +160,6 @@ public class Booking implements DBInterface {
         this.setLuggageSupp(s3);
         this.setMagazinesSupp(s4);
         this.setDiscount(dis);
-        System.out.println(pr);
         this.setPrice(pr);
     }
     @Override
@@ -193,8 +188,9 @@ public class Booking implements DBInterface {
             con.store(table, values);
         }
         else {
-            System.out.println("BOOKING GIà PRESENTE NEL DB GESTIRE ERROR FRAME");
+            throw new IllegalArgumentException("Attenzione, prenotazione già presente nel database");
         }
+        con.close();
     }
     @Override
     public Map retrieve(int id) throws SQLException {
@@ -219,11 +215,13 @@ public class Booking implements DBInterface {
             map.put("discount", Double.parseDouble(String.valueOf(rs.getInt(12))));
         }
         System.out.println("Prenotazione trovata e caricata dal db");
+        con.close();
         return map;
     }
     public static void delete(int id) throws SQLException {
         FConnect con = new FConnect();
         con.delete(table, key, Integer.toString(id));
+        con.close();
     }
     /* attributi */
     private Persona per;

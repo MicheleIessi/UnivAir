@@ -55,13 +55,13 @@ public class Employer extends Persona implements DBInterface {
     public void setType(String ty)  { 
         if(controlType(ty))
             this.type = ty; 
-        else System.out.println("errore, tipo non accettato gestire error frame Employer.controlType");
+        else throw new IllegalArgumentException("Tipo non accettato, Employer riga 58");
         }
     /* metodi di controllo */
     private boolean controlType(String ty) {
         boolean esito = false;
         for(EmployerTypes et : EmployerTypes.values()) 
-            if(et.toString().equals(ty))
+            if(et.toString().toLowerCase().equals(ty))
                 esito = true;
         return esito;
     }
@@ -87,6 +87,7 @@ public class Employer extends Persona implements DBInterface {
             if(this.to != null)                
                 values.add(this.getStringFromDate(this.to));
             con.store(table, values);
+            con.close();
         }
     }
 
@@ -139,6 +140,7 @@ public class Employer extends Persona implements DBInterface {
             map.put("from", getDateFromString(rs.getString(4)));
             map.put("to", getDateFromString(rs.getString(5)));
         }
+        con.close();
         return map;
     }
     /* attributi */

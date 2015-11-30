@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package univair.Entity;
 
 import java.sql.ResultSet;
@@ -12,6 +7,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import univair.Foundation.FConnect;
+
 /**
  * La classe Persona rappresenta una persona e contiene parametri relativi alle
  * sue generalità anagrafiche
@@ -207,26 +203,13 @@ public class Persona implements DBInterface {
         this.setLDN(nsc.trim());
         this.setLDR(rsd);      
     }
-    public void createFromCF(String cf) throws SQLException {
-        FConnect con = new FConnect();
-        ResultSet rs = con.load(table, "codfis = '" + cf.trim() +"'");
-        while(rs.next()) {
-            String nom = rs.getString(2).trim();
-            String cog = rs.getString(3).trim();
-            GregorianCalendar dat = getDateFromString(rs.getString(4));
-            String sec = rs.getString(5);
-            String mail = rs.getString(7);
-            String ldnas = rs.getString(8);
-            Address add = new Address(rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13));
-            this.setNome(nom);
-            this.setCognome(cog);
-            this.setDDN(dat);
-            this.setSec(sec);
-            this.SetEmail(mail);
-            this.setLDN(ldnas);
-            this.setLDR(add);
-        }
-    }
+    /**
+     * Il metodo static getIDIfExists restituisce l'ID di una persona presente nel DB
+     * (se esiste) cercando il suo codice fiscale (univoco). Se non esiste ritorna 0.
+     * @param CF Il codice fiscale della persona di cui si vuole ricavare l'ID
+     * @return L'ID della persona trovata (se esiste), o 0 (se non esiste)
+     * @throws SQLException 
+     */
     public static int getIDIfExists(String CF) throws SQLException {
         FConnect con = new FConnect();
         ResultSet rs = con.load(table, "codfis = '" + CF + "'");
@@ -234,6 +217,7 @@ public class Persona implements DBInterface {
         if(rs.last()) {
             ID = rs.getInt(1);
         }
+        con.close();
         return ID;
     }
     /**
@@ -262,6 +246,7 @@ public class Persona implements DBInterface {
             Address temp = new Address(rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13));
             map.put("ldr", temp);            
         }
+        con.close();
         return map;
     }
     @Override
@@ -287,17 +272,26 @@ public class Persona implements DBInterface {
             values.add(this.ldr.getCAP());
             values.add(this.ldr.getProv());
             con.store(table, values);
+            con.close();
         }
     }
     public static void delete(int id) throws SQLException {
         FConnect con = new FConnect();
         con.delete(table, key, Integer.toString(id));
+        con.close();
     }
+    /**
+     * Il metodo getIDFromDB restituisce l'ID della Persona che chiama il
+     * metodo cercando nel DB usando il codice fiscale della Persona. Viene 
+     * chiamato solo se c'è certezza che la Persona abbia una corrispattiva
+     * ennupla già salvata nel DB.
+     * @return l'id della Persona chiamante il metodo
+     * @throws SQLException 
+     */
     public int getIDFromDB() throws SQLException {
         FConnect con = new FConnect();
         String cf = this.CF;
         ResultSet rs = null;
-        System.out.println(cf);
         try {
             rs = con.load(table, "codfis = '" + cf.trim()+"'");
         } catch (SQLException e) {
