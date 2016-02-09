@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package univair.Entity;
+package univair.Presentation;
 
 /**
  *
  * @author Michele
  */
-public enum EmployerTypes {
-    Reception, Pilot, Copilot, Hostess
+public class AdminPanel {
+    
 }

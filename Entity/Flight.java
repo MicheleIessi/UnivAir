@@ -26,15 +26,12 @@ public class Flight {
      * e una data di partenza
      * @param r La tratta alla quale appartiene il volo
      * @param id L'ID del volo appena creato
-     * @param e Array di Employer che specifica l'equipaggio
      * @param s Il numero di posti disponibili
      * @param d La data di partenza.
      */
-    public Flight(Route r, String id, Employer[] e, int s, GregorianCalendar d) {
-        controlCrew(e);
+    public Flight(Route r, String id, int s, GregorianCalendar d) {
         this.route = r;
         this.ID = id;
-        this.crew = e;
         this.seats = s;
         this.date = d;
         System.out.println("Volo creato: ID: " + id + ", Tratta: " + r.getDeparture() + " - " + r.getDestination() + ", posti: " + s + ", data: " + this.getDateString());
@@ -42,12 +39,10 @@ public class Flight {
     /* getter & setter */
     public Route getRoute()     { return this.route; }
     public String getID()       { return this.ID; }
-    public Employer[] getCrew() { return this.crew; }
     public int getSeats()       { return this.seats; }
     public GregorianCalendar getDate()       { return this.date; }
     public void setRoute(Route r)     { this.route = r; }
     public void setID(String id)      { this.ID = id; }
-    public void setCrew(Employer[] e) { this.crew = e; }
     public void setSeats(int s)       { this.seats = s; }
     public void setDate(GregorianCalendar d)       { this.date = d; }
     /**
@@ -57,25 +52,6 @@ public class Flight {
      */
     public String getDateString() {
         return (this.date.get(1)+1900) + "-" + (this.date.get(2)+1) + "-" + this.date.get(5);    }
-    public void setPilot(Employer e)   { this.crew[0] = e; }
-    public void setCopilot(Employer e) { this.crew[1] = e; }
-    public void setHost1(Employer e)   { this.crew[2] = e; }
-    public void setHost2(Employer e)   { this.crew[3] = e; }
-    public void setHost3(Employer e)   { this.crew[4] = e; }
-    /* metodi di classe */
-    /**
-     * Il metodo controlCrew() effettua un controllo su un array di Employer per
-     * verificare che sia presente un Employer di tipo 'Pilot', uno di tipo 
-     * 'Copilot' e 3 di tipo 'Hostess'.
-     * @param e L'array di Employer su cui fare il controllo.
-     */
-    public static void controlCrew(Employer[] e) {
-        if(!e[0].type.equals("Pilot")) throw new IllegalArgumentException("Errore, pilota mancante");
-        if(!e[1].type.equals("Copilot")) throw new IllegalArgumentException("Errore, copilota mancante");
-        if(!e[2].type.equals("Hostess")) throw new IllegalArgumentException("Errore, hostess 1 mancante");
-        if(!e[3].type.equals("Hostess")) throw new IllegalArgumentException("Errore, hostess 2 mancante");
-        if(!e[4].type.equals("Hostess")) throw new IllegalArgumentException("Errore, hostess 3 mancante");
-    }
     /* metodi per il DB */
     /**
      * Il metodo getDateFromString crea un oggetto GregorianCalendar a partire
@@ -115,43 +91,12 @@ public class Flight {
         Route r = (Route) map.get("route");
         String nid = (String) map.get("ID");
         GregorianCalendar dat = (GregorianCalendar) map.get("date");
-        Employer[] e = (Employer[]) map.get("crew");
         int s = (int) map.get("seats");
         this.setRoute(r);
         this.setID(nid);
         this.setDate(dat);
-        this.setCrew(e);
         this.setSeats(s);
         
-    }
-    public Employer[] getEmployersFromDB(int id, GregorianCalendar gc) throws SQLException, IllegalArgumentException {
-        FConnect con = new FConnect();
-        String[] keys = {"idvolo","decollovolo"};
-        String dat = getStringFromDate(gc);
-        String[] conds = {Integer.toString(id),dat};
-        ResultSet rs = con.search("lavoripassati", keys, conds);
-        rs.next();
-        if(rs.getRow() == 0) {
-            throw new IllegalArgumentException("Nessun risultato per l'id selezionato");
-        }
-        int e1 = Integer.parseInt(rs.getString(3));
-        int e2 = Integer.parseInt(rs.getString(4));
-        int e3 = Integer.parseInt(rs.getString(5));
-        int e4 = Integer.parseInt(rs.getString(6));
-        int e5 = Integer.parseInt(rs.getString(7));
-        Employer pilot = new Employer();
-        Employer copilot = new Employer();
-        Employer hostess1 = new Employer();
-        Employer hostess2 = new Employer();
-        Employer hostess3 = new Employer();
-        pilot.createFromDB(e1);
-        copilot.createFromDB(e2);
-        hostess1.createFromDB(e3);
-        hostess2.createFromDB(e4);
-        hostess3.createFromDB(e5);
-        Employer[] e = {pilot,copilot,hostess1,hostess2,hostess3};
-        con.close();
-        return e;
     }
     public static int getRouteID(int id) throws SQLException {
         FConnect con = new FConnect();
@@ -191,12 +136,10 @@ public class Flight {
         while(rs.next()) {
             map = new HashMap<>();
             Route r = new Route();
-            Employer[] e = getEmployersFromDB(id, gc);
             r.createFromDB(getRouteID(id));
             map.put("route", r);
             map.put("ID", Integer.toString(rs.getInt(1)));
             map.put("date", getDateFromString(rs.getString(2)));
-            map.put("crew", e);
             map.put("seats", rs.getInt(4));
         }
         con.close();
@@ -222,7 +165,6 @@ public class Flight {
     /* attributi */
     private Route route;
     private String ID;
-    private Employer[] crew;
     private int seats;
     private GregorianCalendar date;
     /* attributi di classe (per il db) */

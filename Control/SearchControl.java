@@ -38,8 +38,8 @@ public class SearchControl {
     private GregorianCalendar getDateFromString(String date) {
         GregorianCalendar gc = new GregorianCalendar();
         int year = Integer.parseInt(date.substring(0, 4));
-        int month = Integer.parseInt(date.substring(5, 7))-1;
-        int day = Integer.parseInt(date.substring(8, date.length()));
+        int month = Integer.parseInt(date.substring(5, 6))-1;
+        int day = Integer.parseInt(date.substring(7, date.length()));
         gc.set(year, month, day);
         return gc;
     }   

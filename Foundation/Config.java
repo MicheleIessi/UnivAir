@@ -17,6 +17,8 @@ public class Config {
     public String getDB()           { return this.DB; }
     public String getDBUsername()   { return this.DBUsername; }
     public String getDBPassword()   { return this.DBPassword; }
+    public String getAdminUsername(){ return this.adminUsername; }
+    public String getAdminPassword(){ return this.adminPassword; }
     
     
     
@@ -26,7 +28,7 @@ public class Config {
     private String DBUsername = "postgres";
     private String DBPassword = "admin";
     
-    private String adminUsername;
-    private String adminPassword;
+    private String adminUsername = "adminusername";
+    private String adminPassword = "adminpassword";
     
 }
