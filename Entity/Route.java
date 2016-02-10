@@ -72,7 +72,9 @@ public class Route {
             con.store(table, values);
         }
         else {
-            System.out.println("route già presente nel db con lo stesso id gestire error frame Route.store()");
+            Route r = new Route();
+            r.createFromDB(id);
+            throw new IllegalArgumentException("Una rotta è già presente nel db con lo stesso ID (" + r.getDeparture() + "-" + r.getDestination() + "). Scegliere un altro ID.");
         }
     }
     public Map retrieve(int id) throws SQLException {
@@ -102,9 +104,6 @@ public class Route {
         }
         if(rs.last()) {
             id = rs.getInt(1);
-        }
-        if(id == 0) {
-            throw new IllegalArgumentException("Errore, la tratta "+dep+"-"+des+" non è presente nel DB. È necessario aggiungerla.");
         }
         return id;
     }

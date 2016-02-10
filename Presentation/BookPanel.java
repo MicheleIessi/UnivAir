@@ -552,8 +552,8 @@ public class BookPanel extends JFrame {
                 book.setDiscount(disc);
                 aggiornaPrezzo(disc);
                 book.setPrice(Double.parseDouble(priceLabel.getText()));
-                System.out.println(disc);
-                System.out.println(book.getPrice());
+                //System.out.println(disc);
+                //System.out.println(book.getPrice());
             }
         });
         

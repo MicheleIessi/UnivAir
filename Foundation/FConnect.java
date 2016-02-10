@@ -137,7 +137,8 @@ public class FConnect {
     }
     /**
      * Il metodo search() è simile al metodo load() ma pensato per le tabelle che
-     * hanno una chiave primaria composta da due o più attributi.
+     * hanno una chiave primaria composta da due o più attributi o per ricerche
+     * basate su più di un attributo.
      * @param table Stringa contenente la tabella su cui effettuare la ricerca
      * @param keys Array di stringhe contenente le chiavi della tabella
      * @param values Array di stringhe contenente i valori da cercare
@@ -159,6 +160,7 @@ public class FConnect {
             }
         }        
         String sql = "SELECT * FROM " + table + " WHERE " + cond;  
+        //System.out.println(sql);
         ResultSet rs = stmt.executeQuery(sql);
         return rs;
     }

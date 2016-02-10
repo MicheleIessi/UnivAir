@@ -6,6 +6,7 @@
 package univair.Presentation;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import univair.Control.ResultControl;
 import univair.Entity.Route;
 
@@ -32,11 +34,11 @@ public class ResultPanel extends JFrame {
     public ResultPanel(ArrayList list, Route r, String d) {
         dep = r.getDeparture();
         des = r.getDestination();
-        initComponents(list);
+        initComponents(list,d);
         setVisible(true);
     }
     
-    public void initComponents(ArrayList lst) {
+    public void initComponents(ArrayList lst, String dat) {
         // <editor-fold desc="Definisco le proprietà della JFrame">        
         try {
             for(javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -54,9 +56,9 @@ public class ResultPanel extends JFrame {
         } catch(IOException ex) {
             System.out.println("Immagine non trovata - airunivaqicon.png");
         }
-        this.setBounds(283, 84, 800, 600);
-        this.setMinimumSize(new Dimension(620,420));
-        this.setPreferredSize(new Dimension(620,500));
+        this.setBounds(383, 184, 600, 400);
+        this.setMinimumSize(new Dimension(450,320));
+        this.setPreferredSize(new Dimension(450,400));
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         BorderLayout border = new BorderLayout();
         Container content = this.getContentPane();
@@ -81,7 +83,7 @@ public class ResultPanel extends JFrame {
         centralPanel.setAlignmentX(CENTER_ALIGNMENT);
         centralPanel.setLayout(new BoxLayout(centralPanel,BoxLayout.Y_AXIS));
         /* prima label */
-        detailLabel = new JLabel("Risultati ricerca: voli da " + dep + " a " + des + ":");
+        detailLabel = new JLabel("Risultati ricerca: voli da " + dep + " a " + des + " in data " + dat +":");
         detailLabel.setAlignmentX(CENTER_ALIGNMENT);
         detailLabel.setFont(new Font("Arial",Font.ITALIC,20));
         /* prima jlist */
@@ -106,6 +108,8 @@ public class ResultPanel extends JFrame {
         resultList.setLayoutOrientation(JList.VERTICAL);
         resultList.setFont(new Font("Times New Roman",Font.PLAIN,20));
         resultList.setSelectedIndex(0);
+        Border blackline = BorderFactory.createLineBorder(Color.black);
+        resultList.setBorder(blackline);
         scrollPane.setViewportView(resultList);
         //south
         bookButton = new JButton("Prenota");
@@ -116,6 +120,16 @@ public class ResultPanel extends JFrame {
                 bookButtonAction(e);
             }
         });
+        cancelButton = new JButton("Annulla");
+        cancelButton.setAlignmentX(CENTER_ALIGNMENT);
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cancelButtonAction(e);
+            }
+        });
+        buttonPanel = new JPanel();
+        buttonPanel.setAlignmentX(CENTER_ALIGNMENT);
         
         //</editor-fold>
         
@@ -123,17 +137,24 @@ public class ResultPanel extends JFrame {
         
         centralPanel.add(detailLabel);
         centralPanel.add(resultList);
+        buttonPanel.add(bookButton);
+        buttonPanel.add(cancelButton);
         content.add(imagePanel, BorderLayout.NORTH);
         content.add(centralPanel, BorderLayout.CENTER);
-        content.add(bookButton, BorderLayout.SOUTH);
-        
+        content.add(buttonPanel, BorderLayout.SOUTH);
         //</editor-fold>
     }
     
-    public void bookButtonAction(java.awt.event.ActionEvent evt) {
-        HashMap map = (HashMap) resultList.getSelectedValue();
-        
-        new ResultControl(map);
+    public void bookButtonAction(ActionEvent evt) {
+        HashMap map = (HashMap) resultList.getSelectedValue();      
+        try {
+            new ResultControl(map);
+        } catch (NullPointerException e) {
+            new MessageFrame("Selezionare un risultato",0);
+        }
+    }
+    public void cancelButtonAction(ActionEvent evt) {
+        super.dispose();
     }
         /* attributi di swing */
     private JPanel imagePanel;
@@ -142,6 +163,8 @@ public class ResultPanel extends JFrame {
     private JList resultList;
     private String dep,des;
     private JScrollPane scrollPane;
+    private JPanel buttonPanel;
     private JButton bookButton;
+    private JButton cancelButton;
 
 }

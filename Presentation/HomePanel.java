@@ -184,7 +184,7 @@ public class HomePanel extends javax.swing.JFrame {
         //System.out.println(dat.getMonth()+1);
         String dep = depBox.getSelectedItem().toString();
         String des = desBox.getSelectedItem().toString();
-        
+        //System.out.println(sdat);
         new SearchControl(dep, des, sdat);
     }
     

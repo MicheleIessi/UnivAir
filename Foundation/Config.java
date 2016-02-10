@@ -28,7 +28,7 @@ public class Config {
     private String DBUsername = "postgres";
     private String DBPassword = "admin";
     
-    private String adminUsername = "adminusername";
-    private String adminPassword = "adminpassword";
+    private String adminUsername = "admin";
+    private String adminPassword = "admin";
     
 }

@@ -8,6 +8,7 @@ package univair.Control;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import univair.Entity.Flight;
 import univair.Entity.Route;
 import univair.Presentation.MessageFrame;
@@ -28,7 +29,7 @@ public class SearchControl {
                 throw new IllegalArgumentException("Selezionare una data adatta");
             }
             int id = r.getIdFromDB();
-            ArrayList list = Flight.getFlightsFromRouteID(id);
+            ArrayList list = Flight.getFlightsRouteDate(id, dat);
             new ResultPanel(list,r,dat);
         } catch (IllegalArgumentException | SQLException e) {
             new MessageFrame(e.getMessage(), 0);

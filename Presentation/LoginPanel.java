@@ -147,7 +147,9 @@ public class LoginPanel extends JFrame {
                 cancelButtonAction(e);
             }
         });
+        //</editor-fold>
         
+        //<editor-fold desc="Inserisco gli elementi appena creati nella JFrame">
         usernamePanel.add(usernameLabel);
         usernamePanel.add(usernameTF);
         passwordPanel.add(passwordLabel);
@@ -161,7 +163,7 @@ public class LoginPanel extends JFrame {
         content.add(imagePanel,BorderLayout.NORTH);
         content.add(centralPanel,BorderLayout.CENTER);
         content.add(centralPanel,BorderLayout.CENTER);
-        
+        //</editor-fold>
         pack();
     }
     
@@ -171,6 +173,7 @@ public class LoginPanel extends JFrame {
             String password = passwordTF.getText();
             try {
                 new LoginControl(username, password);
+                this.dispose();
             } catch(Exception e) {
                 new MessageFrame(e.getMessage(),0);
             }
@@ -178,8 +181,7 @@ public class LoginPanel extends JFrame {
         private void cancelButtonAction(java.awt.event.ActionEvent evt) {
             super.dispose();
         }
-    
-    
+
     private JPanel imagePanel;
     private JPanel centralPanel;
         private JPanel usernamePanel;

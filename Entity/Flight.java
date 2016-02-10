@@ -128,6 +128,31 @@ public class Flight {
         con.close();
         return list;
     }
+    
+    public static ArrayList getFlightsRouteDate(int id, String dat) throws SQLException {
+        FConnect con = new FConnect();
+        String ids = Integer.toString(id);
+        String[] cond = {ids,dat};
+        String[] keys = {"idtratta", "decollo"};
+        ResultSet rs = con.search(table, keys, cond);
+        ArrayList list = new ArrayList();
+        HashMap<String,Object> map;
+        while(rs.next()) {
+            map = new HashMap<>();
+            map.put("ID", Integer.toString(rs.getInt(1)));
+            map.put("date", rs.getString(2));
+            map.put("seats", rs.getInt(4));
+            list.add(map);
+        }
+        //System.out.println(list.size());
+        if(list.isEmpty()) {
+            con.close();
+            throw new SQLException("Nessun risultato trovato per la tratta richiesta");
+        }
+        con.close();
+        return list;
+        
+    }
     public Map retrieve(int id, GregorianCalendar gc) throws SQLException {
         FConnect con = new FConnect();
         String[] cond = {Integer.toString(id),getStringFromDate(gc)};

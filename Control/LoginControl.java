@@ -16,10 +16,10 @@ public class LoginControl {
     static Config con = new Config();
 
     public LoginControl(String user, String pass) throws Exception {
-        System.out.println("Prova username: "+user+", password: "+pass);
-        System.out.println("Credenziali giuste: "+con.getAdminUsername()+","+con.getAdminPassword());
+//        System.out.println("Username: "+user+", password: "+pass);
+//        System.out.println("Credenziali giuste: "+con.getAdminUsername()+","+con.getAdminPassword());
         if(user.equals(con.getAdminUsername()) && pass.equals(con.getAdminPassword()))
-            new AdminPanel();
+            new AdminPanel(con.getAdminUsername());
         else 
             throw new Exception("Credenziali di login errate");
     }

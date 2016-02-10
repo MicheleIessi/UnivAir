@@ -10,7 +10,8 @@ import javax.swing.JPanel;
 
 
 /**
- *
+ * La classe MessageFrame crea una generica finestra contenente un
+ * messaggio informativo, d'errore o d'avvertimento.
  * @author Michele
  */
 public class MessageFrame {
