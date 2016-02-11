@@ -149,6 +149,7 @@ public class ResultPanel extends JFrame {
         HashMap map = (HashMap) resultList.getSelectedValue();      
         try {
             new ResultControl(map);
+            this.dispose();
         } catch (NullPointerException e) {
             new MessageFrame("Selezionare un risultato",0);
         }

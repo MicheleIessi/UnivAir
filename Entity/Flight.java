@@ -51,7 +51,7 @@ public class Flight {
      * @return una stringa "traduzione" della data di partenza del volo.
      */
     public String getDateString() {
-        return (this.date.get(1)+1900) + "-" + (this.date.get(2)+1) + "-" + this.date.get(5);    }
+        return (this.date.get(1)) + "-" + (this.date.get(2)+1) + "-" + this.date.get(5);    }
     /* metodi per il DB */
     /**
      * Il metodo getDateFromString crea un oggetto GregorianCalendar a partire
@@ -156,7 +156,8 @@ public class Flight {
     public Map retrieve(int id, GregorianCalendar gc) throws SQLException {
         FConnect con = new FConnect();
         String[] cond = {Integer.toString(id),getStringFromDate(gc)};
-        ResultSet rs = con.search(table, key, cond);
+        String[] keys = {"id","decollo"};
+        ResultSet rs = con.search(table, keys, cond);
         Map<String,Object> map = new HashMap<>();
         while(rs.next()) {
             map = new HashMap<>();
@@ -172,19 +173,12 @@ public class Flight {
     }
     public void store() throws SQLException {
         FConnect con = new FConnect();
-        String[] val = {this.ID,this.getDateString()};
-        if(!con.existsMultipleKey(table, key, val)) {        
-            ArrayList<String> values = new ArrayList<>();
-            values.add(this.ID);
-            values.add(this.getDateString());
-            values.add(Integer.toString(this.route.getIdFromDB()));
-            values.add(Integer.toString(seats));
-            con.store(table, values);    
-        }
-        else {
-            con.close();
-            System.out.println("volo con stesse keys già presente nel db GESTIRE ERROR FRAME Flight.store()");
-        }
+        ArrayList<String> values = new ArrayList<>();
+        values.add("DEFAULT");
+        values.add(this.getDateString());
+        values.add(Integer.toString(this.route.getIdFromDB()));
+        values.add(Integer.toString(this.seats));
+        con.store(table, values);    
         con.close();
     }
     /* attributi */
@@ -194,5 +188,5 @@ public class Flight {
     private GregorianCalendar date;
     /* attributi di classe (per il db) */
     private static final String table = "volo";
-    private static final String[] key = {"id","decollo"};
+    private static final String[] key = {"id","idtratta","decollo"};
 }

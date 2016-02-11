@@ -59,6 +59,7 @@ public class FConnect {
         String val = "";
         String item = "";
         for(int i = 0; i < j; i++) {
+            //System.out.println(values.get(i));
             if(values.get(i).toString().equals("DEFAULT")) {
                 item = values.get(i).toString();
             }
@@ -71,7 +72,7 @@ public class FConnect {
             val = val + item;
         }        
         String sql = "INSERT INTO " + table + " VALUES (" + val + ");";
-        //System.out.println(sql);
+        System.out.println(sql);
         query(sql);
     }
     /**
@@ -176,6 +177,12 @@ public class FConnect {
     public void delete(String table, String key, String value) throws SQLException {
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         String sql = "DELETE FROM " + table + " WHERE " + key + " = " + value;
+        stmt.executeUpdate(sql);
+    }
+    
+    public void decrement(String id) throws SQLException {
+        Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        String sql = "UPDATE volo SET posti = posti - 1 WHERE id = " +id;
         stmt.executeUpdate(sql);
     }
     

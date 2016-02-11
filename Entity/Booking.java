@@ -164,11 +164,15 @@ public class Booking implements DBInterface {
     }
     @Override
     public void store() throws SQLException {
+        GregorianCalendar nd = this.fl.getDate();
+        nd.add(1, 1900);
+        this.fl.setDate(nd);
         FConnect con = new FConnect();
         String persID = Integer.toString(this.per.getIDFromDB());
         String[] keys = {"idpersona","idvolo","datavolo"};
         String[] vals = {persID,this.fl.getID(),this.fl.getDateString()};
-        if(!con.existsMultipleKey(table, keys, vals)) {         
+        if(!con.existsMultipleKey(table, keys, vals)) {        
+            //aggiungo la prenotazione
             ArrayList<String> values = new ArrayList<>();
             values.add("DEFAULT");
             values.add(persID);
@@ -186,6 +190,8 @@ public class Booking implements DBInterface {
             a = a.substring(0, ind);
             values.add(a);
             con.store(table, values);
+            //decremento di 1 il numero di posti disponibili per il volo
+            con.decrement(this.fl.getID());
         }
         else {
             throw new IllegalArgumentException("Attenzione, prenotazione già presente nel database");

@@ -8,7 +8,6 @@ package univair.Control;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import univair.Entity.Flight;
 import univair.Entity.Route;
 import univair.Presentation.MessageFrame;

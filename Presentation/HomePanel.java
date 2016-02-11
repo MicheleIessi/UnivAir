@@ -179,7 +179,6 @@ public class HomePanel extends javax.swing.JFrame {
     
     private void searchButtonAction(java.awt.event.ActionEvent evt) {
         Date dat = datePicker.getDate();
-        
         String sdat = (dat.getYear()+1900)+"-"+(dat.getMonth()+1)+"-"+dat.getDate();
         //System.out.println(dat.getMonth()+1);
         String dep = depBox.getSelectedItem().toString();

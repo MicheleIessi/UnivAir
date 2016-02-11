@@ -21,6 +21,7 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -32,6 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UnsupportedLookAndFeelException;
+import org.jdesktop.swingx.JXDatePicker;
 import univair.Control.AddControl;
 import univair.Entity.City;
 
@@ -75,7 +77,6 @@ public class AdminPanel extends JFrame {
         //</editor-fold>
         
         // <editor-fold desc="Creo gli elementi da inserire nella JFrame e ne definisco le proprietà">
-        
         // north
         /* immagine */
         imagePanel = new JPanel();
@@ -128,15 +129,18 @@ public class AdminPanel extends JFrame {
         centralPanel.add(detailButton);
         centralPanel.add(new JPanel());
         centralPanel.add(cancelButton);
-        
         content.add(imagePanel,BorderLayout.NORTH);
         content.add(centralPanel,BorderLayout.CENTER);
         
+        initializeOthers();
         pack();
     }
-    
-    private void redrawRouteAction() {
-        centralPanel.removeAll();
+    /**
+     * Il metodo initializeOthers inizializza tutti i componenti che potrebbero
+     * venire agganciati al container 'centralPanel' tramite una delle 3 scelte.
+     */
+    private void initializeOthers() {
+        
         depBox = new JComboBox<>();
         depBox.setModel(new DefaultComboBoxModel<>(City.values()));
         depBox.setAlignmentX(CENTER_ALIGNMENT);
@@ -151,33 +155,34 @@ public class AdminPanel extends JFrame {
         idTF = new JTextField("ID",10);
         idTF.setForeground(Color.lightGray);
         idTF.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if("ID".equals(idTF.getText())) {
-                    idTF.setText("");
-                    idTF.setForeground(Color.black);
+        @Override
+        public void focusGained(FocusEvent e) {
+            if("ID".equals(idTF.getText())) {
+                idTF.setText("");
+                idTF.setForeground(Color.black);
                 }
             }
-            @Override
-            public void focusLost(FocusEvent e) {
-                if("".equals(idTF.getText())) {
-                    idTF.setText("ID");
-                    idTF.setForeground(Color.lightGray);
+        @Override
+        public void focusLost(FocusEvent e) {
+            if("".equals(idTF.getText())) {
+                idTF.setText("ID");
+                idTF.setForeground(Color.lightGray);
                 }
             }
         });
         idTF.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                if(!Character.isDigit(e.getKeyChar())) {
-                    e.consume();
-                }
+        @Override
+        public void keyTyped(KeyEvent e) {
+            if(!Character.isDigit(e.getKeyChar())) {
+                e.consume();
             }
-            @Override
+        }
+        @Override
             public void keyPressed(KeyEvent e) {}
-            @Override
+        @Override
             public void keyReleased(KeyEvent e) {}
         });
+        datePicker = new JXDatePicker(new Date());
         infoLabel1 = new JLabel("Partenza:");
         infoLabel1.setForeground(Color.blue);
         infoLabel1.setFont(infoFont);
@@ -187,23 +192,30 @@ public class AdminPanel extends JFrame {
         infoLabel3 = new JLabel("ID:");
         infoLabel3.setForeground(Color.blue);
         infoLabel3.setFont(infoFont);
+        cancelButton1.setAlignmentX(CENTER_ALIGNMENT);
+        cancelButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cancelAction(1);
+                }
+            });   
+        choicePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        choicePanel.setAlignmentX(CENTER_ALIGNMENT);
+        
+    }
+    
+    private void redrawRouteAction() {
+        
+        this.setTitle("Aggiunta rotta");
+        centralPanel.removeAll();
         confirmButton = new JButton("Aggiungi rotta");
         confirmButton.setAlignmentX(CENTER_ALIGNMENT);
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 routeConfirmAction();
-            }
-        });
-        cancelButton1.setAlignmentX(CENTER_ALIGNMENT);
-        cancelButton1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cancelAction(1);
-            }
-        });   
-        choicePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        choicePanel.setAlignmentX(CENTER_ALIGNMENT);
+                }
+            });
         choicePanel.add(infoLabel1);
         choicePanel.add(depBox);
         choicePanel.add(infoLabel2);
@@ -215,9 +227,34 @@ public class AdminPanel extends JFrame {
         centralPanel.add(confirmButton);
         centralPanel.add(cancelButton1);
         this.pack();
+        
     }
     private void redrawFlightAction() {
+        
+        this.setTitle("Aggiunta volo");
         centralPanel.removeAll();
+        confirmButton1 = new JButton("Aggiungi volo");
+        confirmButton1.setAlignmentX(CENTER_ALIGNMENT);
+        confirmButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                flightConfirmAction();
+            }
+        });        
+        choicePanel.add(infoLabel1);
+        choicePanel.add(depBox);
+        choicePanel.add(infoLabel2);
+        choicePanel.add(desBox);
+        centralPanel.add(choicePanel);
+        infoLabel3.setText("Data:");
+        idPanel.add(infoLabel3);
+        idPanel.add(datePicker);
+        centralPanel.add(choicePanel);
+        centralPanel.add(idPanel);
+        centralPanel.add(confirmButton1);
+        centralPanel.add(cancelButton1);
+        this.pack();
+        
     }
     private void redrawDetailAction() {
         centralPanel.removeAll();
@@ -236,6 +273,16 @@ public class AdminPanel extends JFrame {
                 new AddControl(depBox.getSelectedItem().toString(),desBox.getSelectedItem().toString(),Integer.parseInt(idTF.getText()));
             else throw new IllegalArgumentException("Inserire un ID valido");
         } catch (IllegalArgumentException e) {
+            new MessageFrame(e.getMessage(),0);
+        }
+    }
+    
+    private void flightConfirmAction() {
+        try {
+            Date dat = datePicker.getDate();
+            String sdat = (dat.getYear()+1900)+"-"+(dat.getMonth()+1)+"-"+dat.getDate();
+            new AddControl(depBox.getSelectedItem().toString(),desBox.getSelectedItem().toString(),sdat);
+        } catch(IllegalArgumentException e) {
             new MessageFrame(e.getMessage(),0);
         }
     }
@@ -275,6 +322,7 @@ public class AdminPanel extends JFrame {
         private JButton flightButton;
         private JButton detailButton;
         private JButton confirmButton;
+        private JButton confirmButton1;
         private final JButton cancelButton = new JButton("Annulla");
         private final JButton cancelButton1= new JButton("Annulla");
         
@@ -284,6 +332,10 @@ public class AdminPanel extends JFrame {
         private JPanel choicePanel;
             private JComboBox<City> depBox;
             private JComboBox<City> desBox;
+    //aggiunta volo
+        private JXDatePicker datePicker;
+        
+        
         
     private final Font infoFont = new Font("Times New Roman",Font.ITALIC, 16);    
 }

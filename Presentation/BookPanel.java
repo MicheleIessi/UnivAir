@@ -576,45 +576,41 @@ public class BookPanel extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 HashMap<String,Object> persona = new HashMap();
-                    persona.put("nome", nameTextField.getText());
-                    persona.put("cognome", surnameTextField.getText());
-                    persona.put("datanascita", datePicker.getDate()); //è una data da formattare nel formato yyyy-mm-dd
-                    String sex = "";
-                    for(Enumeration<AbstractButton> buttons = mf.getElements(); buttons.hasMoreElements();) {
-                        AbstractButton button = buttons.nextElement();
-                        if(button.isSelected()) 
-                            sex = button.getText();
-                    }
-                    persona.put("sesso", sex);
-                    persona.put("codice fiscale", CFTextField.getText());
-                    persona.put("email",mailTextField.getText());
-                    persona.put("luogo di nascita", birthCityTextField.getText());
-                    persona.put("città di residenza", cittàTextField.getText());
-                    persona.put("via", viaTextField.getText());
-                    persona.put("numero civico", numeroTextField.getText());
-                    persona.put("cap", capTextField.getText());
-                    persona.put("provincia", provinciaTextField.getText()); //persona contiene 12 objects
-
-                    HashMap<String,Object> prenotazione = new HashMap();
-                    prenotazione.put("idvolo", map.get("ID"));
-                    prenotazione.put("datavolo", map.get("date")); //date è una stringa già formattata yyyy-mm-dd
-                    String classe = "";
-                    for(Enumeration<AbstractButton> buttons = fs.getElements(); buttons.hasMoreElements();) {
-                        AbstractButton button = buttons.nextElement();
-                        if(button.isSelected()) 
-                            classe = button.getText();
-                    }
-                    prenotazione.put("classe",classe);
-                    prenotazione.put("pasto",mealBox.isSelected());
-                    prenotazione.put("animale",animalBox.isSelected());
-                    prenotazione.put("bagaglio",luggageBox.isSelected());
-                    prenotazione.put("riviste",magazineBox.isSelected()); 
-                    prenotazione.put("prezzo",priceLabel.getText());        //prenotazione contiene 8 objects
-                try {
-                    new BookControl(persona,prenotazione);
-                } catch (SQLException ex) {
-                    Logger.getLogger(BookPanel.class.getName()).log(Level.SEVERE, null, ex);
+                persona.put("nome", nameTextField.getText());
+                persona.put("cognome", surnameTextField.getText());
+                persona.put("datanascita", datePicker.getDate()); //è una data da formattare nel formato yyyy-mm-dd
+                String sex = "";
+                for(Enumeration<AbstractButton> buttons = mf.getElements(); buttons.hasMoreElements();) {
+                    AbstractButton button = buttons.nextElement();
+                    if(button.isSelected()) 
+                        sex = button.getText();
                 }
+                persona.put("sesso", sex);
+                persona.put("codice fiscale", CFTextField.getText());
+                persona.put("email",mailTextField.getText());
+                persona.put("luogo di nascita", birthCityTextField.getText());
+                persona.put("città di residenza", cittàTextField.getText());
+                persona.put("via", viaTextField.getText());
+                persona.put("numero civico", numeroTextField.getText());
+                persona.put("cap", capTextField.getText());
+                persona.put("provincia", provinciaTextField.getText()); //persona contiene 12 objects
+
+                HashMap<String,Object> prenotazione = new HashMap();
+                prenotazione.put("idvolo", map.get("ID"));
+                prenotazione.put("datavolo", map.get("date")); //date è una stringa già formattata yyyy-mm-dd
+                String classe = "";
+                for(Enumeration<AbstractButton> buttons = fs.getElements(); buttons.hasMoreElements();) {
+                    AbstractButton button = buttons.nextElement();
+                    if(button.isSelected()) 
+                        classe = button.getText();
+                }
+                prenotazione.put("classe",classe);
+                prenotazione.put("pasto",mealBox.isSelected());
+                prenotazione.put("animale",animalBox.isSelected());
+                prenotazione.put("bagaglio",luggageBox.isSelected());
+                prenotazione.put("riviste",magazineBox.isSelected()); 
+                prenotazione.put("prezzo",priceLabel.getText());        //prenotazione contiene 8 objects
+                bookButtonAction(persona,prenotazione);
             }
         });
         
@@ -709,7 +705,14 @@ public class BookPanel extends JFrame {
     private void aggiornaPrezzo(double dis) {
         priceLabel.setText(Double.toString(book.computePrice(volo,dis)));
     }
-    
+    private void bookButtonAction(HashMap persona, HashMap prenotazione) {
+        try {
+            new BookControl(persona,prenotazione);
+            this.dispose();
+        } catch (SQLException e) {
+            new MessageFrame(e.getMessage(), 0);
+        }
+    }
     private GregorianCalendar getDateFromString(String date) {
         int year = Integer.parseInt(date.substring(0, 4))-1900;
         int month = Integer.parseInt(date.substring(5, 7))-1;
@@ -790,13 +793,10 @@ public class BookPanel extends JFrame {
             private JLabel priceLabel;
         private JPanel buttonPanel;                 //wraplayout
             private JButton bookButton;
-            
-            
-    
+     
     private Booking book;
     private Flight volo;
     
     //font per le label
     private Font labelFont = new Font("Times New Roman",Font.ITALIC,12);   
-    
 }
