@@ -74,12 +74,13 @@ public class BookControl {
             boolean animale = (boolean) prenotazione.get("animale");
             boolean bagaglio = (boolean) prenotazione.get("bagaglio");
             boolean riviste = (boolean) prenotazione.get("riviste");
-            boolean reduction = false;
+            boolean reduction = true;
             GregorianCalendar calendar = new GregorianCalendar();
             calendar.add(1, -1910);
             if(p.getDDN().before(calendar))
                 reduction = false;
-            int sconto = 0;
+            String dis = (String) prenotazione.get("sconto");
+            int sconto = Integer.parseInt(dis);
             String prc = (String) prenotazione.get("prezzo");
             double prezzo = Double.parseDouble(prc);
             Booking book = new Booking(p, f, classe, reduction, pasto, animale, bagaglio, riviste, sconto);

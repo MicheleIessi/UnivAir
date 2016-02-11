@@ -609,7 +609,8 @@ public class BookPanel extends JFrame {
                 prenotazione.put("animale",animalBox.isSelected());
                 prenotazione.put("bagaglio",luggageBox.isSelected());
                 prenotazione.put("riviste",magazineBox.isSelected()); 
-                prenotazione.put("prezzo",priceLabel.getText());        //prenotazione contiene 8 objects
+                prenotazione.put("prezzo",priceLabel.getText());        
+                prenotazione.put("sconto",discountTextField.getText());         //prenotazione contiene 9 objects
                 bookButtonAction(persona,prenotazione);
             }
         });

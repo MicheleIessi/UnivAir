@@ -72,7 +72,7 @@ public class FConnect {
             val = val + item;
         }        
         String sql = "INSERT INTO " + table + " VALUES (" + val + ");";
-        System.out.println(sql);
+        //System.out.println(sql);
         query(sql);
     }
     /**
