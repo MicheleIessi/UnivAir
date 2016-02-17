@@ -77,10 +77,10 @@ public class Route {
             throw new IllegalArgumentException("Una rotta è già presente nel db con lo stesso ID (" + r.getDeparture() + "-" + r.getDestination() + "). Scegliere un altro ID.");
         }
     }
-    public Map retrieve(int id) throws SQLException {
+    public HashMap retrieve(int id) throws SQLException {
         FConnect con = new FConnect();
         ResultSet rs = con.load(table,condition + Integer.toString(id));
-        Map<String,String> map = new HashMap<>();
+        HashMap<String,String> map = new HashMap<>();
         while(rs.next()) {
             map = new HashMap<>();
             map.put("id", Integer.toString(rs.getInt(1)));
@@ -110,11 +110,6 @@ public class Route {
     public static void delete(int id) throws SQLException {
         FConnect con = new FConnect();
         con.delete(table, key, Integer.toString(id));
-    }
-    /* metodi di debug */
-    @Override
-    public String toString() {
-        return this.departure + "-" + this.destination;
     }
     /* attributi */
     private String departure;

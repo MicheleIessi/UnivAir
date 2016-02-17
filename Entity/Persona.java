@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import univair.Foundation.FConnect;
+import univair.Foundation.Utility;
 
 /**
  * La classe Persona rappresenta una persona e contiene parametri relativi alle
@@ -17,7 +18,7 @@ import univair.Foundation.FConnect;
 public class Persona implements DBInterface {
     /* costruttori */
     /**
-     * Crea una Persona con i parametri settati a null.
+     * Crea una Persona con i parametri settati ai valori di default.
      */
     public Persona() {};
     /**
@@ -139,7 +140,7 @@ public class Persona implements DBInterface {
      * o 'F'.
      * @return 
      */
-    public static boolean controlField(String s, String tipo) {
+    private static boolean controlField(String s, String tipo) {
         char[] c = s.toCharArray();
         boolean esito = true;
         if(tipo.equals("alpha")) {
@@ -164,25 +165,6 @@ public class Persona implements DBInterface {
         return esito;
     }
     /* metodi per il DB */
-    /**
-     * Il metodo getDateString converte la data di nascita della Persona in una 
-     * stringa formattata secondo il pattern yyyy-mm-dd.
-     * @return una stringa "traduzione" della data di nascita della Persona.
-     */
-    public String getDateString() {
-        return (this.ddn.get(1)+1900) + "-" + (this.ddn.get(2)+1) + "-" + this.ddn.get(5);}
-    /**
-     * Il metodo getDateFromString è il duale di getDateString e converte una 
-     * stringa formattata secondo un pattern yyyy-mm-dd in un GregorianCalendar
-     * @param date la stringa da convertire
-     * @return il GregorianCalendar corrispondente alla stringa
-     */
-    private GregorianCalendar getDateFromString(String date) {
-        int year = Integer.parseInt(date.substring(0, 4))-1900;
-        int month = Integer.parseInt(date.substring(5, 7))-1;
-        int day = Integer.parseInt(date.substring(8, 10));
-        return new GregorianCalendar(year, month, day);
-    }
     @Override
     public void createFromDB(int id) throws SQLException {
         Map<String,Object> map = retrieve(id);
@@ -229,7 +211,7 @@ public class Persona implements DBInterface {
      * @throws SQLException -
      */
     @Override
-    public Map retrieve(int id) throws SQLException {
+    public HashMap retrieve(int id) throws SQLException {
         FConnect con = new FConnect();
         ResultSet rs = con.load(table, condition + Integer.toString(id));
         HashMap<String,Object> map = new HashMap<>();
@@ -238,7 +220,7 @@ public class Persona implements DBInterface {
             map.put("id", Integer.toString(rs.getInt(1)));
             map.put("nome", rs.getString(2));
             map.put("cognome", rs.getString(3));
-            map.put("ddn", getDateFromString(rs.getString(4)));
+            map.put("ddn", Utility.getDateFromString(rs.getString(4)));
             map.put("sex", rs.getString(5));
             map.put("CF", rs.getString(6));
             map.put("email", rs.getString(7));
@@ -261,7 +243,7 @@ public class Persona implements DBInterface {
             values.add("DEFAULT");
             values.add(this.nome);
             values.add(this.cognome);
-            values.add(this.getDateString());
+            values.add(Utility.getStringFromDate(this.ddn));
             values.add(this.sex);
             values.add(this.CF);
             values.add(this.email);
@@ -301,31 +283,15 @@ public class Persona implements DBInterface {
         int id = rs.getInt(1);
         return id;
     }
-    /* metodi di debug */
-    @Override
-    public String toString() {
-        return  "nome: "                + this.nome.trim()                                                           + "; " +
-                "cognome: "             + this.cognome.trim()                                                        + "; " +
-                "data: "                + (this.ddn.get(1)+1900) + "-" + (this.ddn.get(2)+1) + "-" + this.ddn.get(5) + "; " +
-                "sesso: "               + this.sex.trim()                                                            + "; " +
-                "CF: "                  + this.CF.trim()                                                             + "; " +
-                "mail: "                + this.email.trim()                                                          + "; " +
-                "città di nascita: "    + this.ldn.trim()                                                            + "; " +
-                "città di residenza: "  + this.ldr.getCittà().trim()                                                 + "; " +
-                "via: "                 + this.ldr.getVia().trim()                                                   + "; " +
-                "numero: "              + this.ldr.getNumero().trim()                                                + "; " +
-                "cap: "                 + this.ldr.getCAP().trim()                                                   + "; " +
-                "provincia: "           + this.ldr.getProv().trim();
-    }
     /* attributi */
-    protected String nome;
-    protected String cognome;
-    protected GregorianCalendar ddn;
-    protected String sex;
-    protected String CF;
-    protected String email;
-    protected String ldn; //luogo di nascita
-    protected Address ldr;//luogo di residenza
+    private String nome;
+    private String cognome;
+    private GregorianCalendar ddn;
+    private String sex;
+    private String CF;
+    private String email;
+    private String ldn; //luogo di nascita
+    private Address ldr;//luogo di residenza
     /* attributi di classe (per il db) */
     private static final String table = "persona";
     private static final String key = "id";

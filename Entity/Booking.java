@@ -14,14 +14,32 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import univair.Foundation.FConnect;
+import univair.Foundation.Utility;
 
 /**
- *
+ * La classe Booking rappresenta una prenotazione.
  * @author Michele
  */
 public class Booking implements DBInterface {
-    
+    /**
+     * Crea una prenotazione con i parametri settati ai valori di default.
+     */
     public Booking() {};
+    /**
+     * Crea una prenotazione con i parametri dati in ingresso. Il prezzo viene
+     * calcolato in base alla distanza tra la città di partenza e di destinazione
+     * del volo, e in base ai supplementi scelti. Inoltre viene calcolato uno
+     * sconto, se presente.
+     * @param p La persona che effettua la prenotazione
+     * @param f Il volo per il quale si effettua la prenotazione
+     * @param c La classe (first o second)
+     * @param red Riduzione di prezzo in base all'età
+     * @param meal Supplemento per pasto a bordo
+     * @param pet Supplemento per trasporto animali
+     * @param lug Supplemeneto per bagaglio addizionale
+     * @param mgzn Supplemento per riviste particolari
+     * @param dis Sconto applicato
+     */
     public Booking(Persona p, Flight f, String c, 
                    boolean red, boolean meal, boolean pet, 
                    boolean lug, boolean mgzn, double dis) {
@@ -43,50 +61,142 @@ public class Booking implements DBInterface {
         }
     }
     /* getter & setter */
-    public Persona getPersona() { return this.per; }
-    public Flight getFlight() { return this.fl; }
+    /**
+     * Ritorna la persona che effettua la prenotazione.
+     * @return la persona che effettua la prenotazione
+     */
+    public Persona getPersona() {
+        Persona p = new Persona();
+        p = this.per;
+        return p;
+    }
+    /**
+     * Ritorna il volo per il quale si effettua la prenotazione.
+     * @return il volo per il quale si effettua la prenotazione
+     */
+    public Flight getFlight() {
+        Flight f = new Flight();
+        f = this.fl;
+        return f;
+    }
+    /**
+     * Ritorna la classe scelta al momento della prenotazione.
+     * @return la classe scelta al momento della prenotazione
+     */
     public String getClss() { return this.clss; }
+    /**
+     * Ritorna il prezzo pagato per la prenotazione.
+     * @return il prezzo pagato per la prenotazione
+     */
     public double getPrice() { return this.price; }
+    /**
+     * Ritorna dettagli riguardo alla riduzione di prezzo legata all'età.
+     * @return true se c'è una riduzione di prezzo legata all'età, false altrimenti
+     */
     public boolean getPriceRed() { return this.priceReduction; }
+    /**
+     * Ritorna true se c'è un supplemento per pasto a bordo.
+     * @return true se c'è supplemento per pasto a bordo, false altrimenti
+     */
     public boolean getMealSupp() { return this.mealSupplement; }
+    /**
+     * Ritorna dettagli riguardo al supplemento per trasporto animale
+     * @return true se c'è un supplemento per trasporto animale, false altrimenti
+     */
     public boolean getPetSupp() { return this.petSupplement; }
+    /**
+     * Ritorna dettagli riguardo al supplemento per bagaglio addizionale.
+     * @return true se c'è un supplemento per bagaglio addizionale, false altrimenti
+     */
     public boolean getLuggageSupp() { return this.luggageSupplement; }
+    /**
+     * Ritorna dettagli riguardo al supplemento per riviste a scelta.
+     * @return true se c'è un supplemento per riviste a scelta, false altrimenti
+     */
     public boolean getMagazinesSupp() { return this.magazinesSupplement; }
+    /**
+     * Ritorna dettagli riguardo allo sconto applicato.
+     * @return Lo sconto applicato in fase di prenotazione
+     */
     public double getDiscount() { return this.discount; }
-    public void setPersona(Persona p) {
-        this.per = p;
-    }
-    public void setFlight(Flight f) {
-        this.fl = f;
-    }
+    /**
+     * Imposta la persona
+     * @param p Oggetto di tipo Persona
+     */
+    public void setPersona(Persona p) { this.per = p; }
+    /**
+     * Imposta il volo
+     * @param f Oggetto di tipo Flight
+     */
+    public void setFlight(Flight f) { this.fl = f; }
+    /**
+     * Imposta la classe ("first" o "second")
+     * @param c Stringa che rappresenta la classe (first o second)
+     */
     public void setClss(String c) {
-        if(controlClass(c)) {
-            this.clss = c;
-        }
+        if(controlClass(c)) { this.clss = c; }
         else throw new IllegalArgumentException("Classe non valida, deve essere 'first' o 'second'");
     }
+    /**
+     * Imposta il prezzo.
+     * @param pr Double che rappresenta il prezzo
+     */
     public void setPrice(double pr) {
         this.price = pr;
     }
+    /**
+     * Imposta una riduzione di prezzo
+     * @param red Booleano che rappresenta una riduzione di prezzo legata all'età
+     */
     public void setPriceRed(boolean red) { 
         this.priceReduction = red;
     }
+    /**
+     * Imposta un supplemento per pasto a bordo
+     * @param meal Booleano che rappresenta il pasto a bordo
+     */
     public void setMealSupp(boolean meal) {
         this.mealSupplement = meal;
     }
+    /**
+     * Imposta un supplemento per animale a bordo
+     * @param pet Booleano che rappresenta un animale a bordo
+     */
     public void setPetSupp(boolean pet) {
         this.petSupplement = pet;
     }
+    /**
+     * Imposta un supplemento per bagaglio addizionale.
+     * @param lugg Booleano che rappresenta un bagaglio addizionale
+     */
     public void setLuggageSupp(boolean lugg) {
         this.luggageSupplement = lugg;
     }
+    /**
+     * Imposta un supplemento per riviste a scelta
+     * @param mgzn Booleano che rappresenta le riviste a scelta
+     */
     public void setMagazinesSupp(boolean mgzn) {
         this.magazinesSupplement = mgzn;
     }
+    /**
+     * Imposta uno sconto arrotondato alla seconda cifra decimale
+     * @param newDis Double che rappresenta lo sconto
+     */
     public void setDiscount(double newDis) {
         this.discount = newDis;   // arrotondamento alla seconda cifra decimale
     }
     /* metodi di classe */
+    /**
+     * Il metodo distance calcola la distanza tra due coordinate rappresentate
+     * da parametri di latitudine e longitudine per calcolare un costo approssimato
+     * del volo.
+     * @param lat1 La latitudine della prima città
+     * @param lon1 La longitudine della prima città
+     * @param lat2 La latitudine della seconda città
+     * @param lon2 La longitudine della seconda città
+     * @return Double che rappresenta la distanza tra le due città
+     */
     private static double distance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;
         double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
@@ -95,12 +205,28 @@ public class Booking implements DBInterface {
         dist = dist * 60 * 1.1515 * 1.609344;
         return dist;      
     }
+    /**
+     * Il metodo deg2rad converte un angolo da gradi in radianti.
+     * @param deg L'angolo in gradi
+     * @return Double che rappresenta l'angolo in radianti
+     */
     private static double deg2rad(double deg) {
             return (deg * Math.PI / 180.0);
     }
+    /**
+     * Il metodo rad2deg converte un angolo da radianti in gradi.
+     * @param rad L'angolo in radianti
+     * @return Double che rappresenta l'angolo in gradi
+     */
     private static double rad2deg(double rad) {
             return (rad * 180 / Math.PI);
     }
+    /**
+     * Il metodo arrotonda arrotonda un valore numerico di tipo Double alla sua
+     * seconda cifra decimale
+     * @param x Il Double da arrotondare
+     * @return Il Double arrotondato alla seconda cifra decimale
+     */
     private static double arrotonda(double x) {
         DecimalFormat df = new DecimalFormat("#####.00");
         df.setRoundingMode(RoundingMode.CEILING);    
@@ -108,9 +234,23 @@ public class Booking implements DBInterface {
         return newValue;
     }  
     /* metodi di supporto */
+    /**
+     * Il metodo controlClass controlla se la stringa in input è "fist" o "second"
+     * @param c La stringa da controllare
+     * @return true se la stringa è "first" o "second", false altrimenti
+     */
     private boolean controlClass(String c) {
         return (c.toLowerCase().equals("first") || c.toLowerCase().equals("second"));
     }   
+    /**
+     * Il metodo computePrice calcola un prezzo approssimato per il volo considerando
+     * la distanza (calcolata con il metodo privato distance) e i vari supplementi/sconti
+     * richiesti
+     * @param f Il volo per il quale calcolare la distanza
+     * @param d Lo sconto richiesto
+     * @return Double che rappresenta il prezzo del volo (arrotondato alla seconda
+     * cifra decimale)
+     */
     public double computePrice(Flight f, double d) {
         String dep = f.getRoute().getDeparture();
         String des = f.getRoute().getDestination();
@@ -131,12 +271,6 @@ public class Booking implements DBInterface {
         return prc;
     }
     /* metodi per il db */
-    private GregorianCalendar getDateFromString(String date) {
-        int year = Integer.parseInt(date.substring(0, 4))-1900;
-        int month = Integer.parseInt(date.substring(5, 7))-1;
-        int day = Integer.parseInt(date.substring(8, 10));
-        return new GregorianCalendar(year, month, day);
-    }
 
     @Override
     public void createFromDB(int id) throws SQLException {
@@ -207,7 +341,7 @@ public class Booking implements DBInterface {
             Persona p = new Persona();
             p.createFromDB(rs.getInt(2));
             Flight f = new Flight();
-            GregorianCalendar gc = getDateFromString(rs.getString(4));
+            GregorianCalendar gc = Utility.getDateFromString(rs.getString(4));
             f.createFromDB(rs.getInt(3), gc);
             map.put("persona", p);
             map.put("flight", f);

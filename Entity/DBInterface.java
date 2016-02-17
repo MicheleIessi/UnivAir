@@ -9,7 +9,8 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- *
+ * L'interfaccia DBInterface contiene i 4 metodi comuni delle classi che si
+ * interfacciano con la classe FConnect.
  * @author Michele
  */
 public interface DBInterface {

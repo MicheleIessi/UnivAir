@@ -40,16 +40,6 @@ public class Address {
     public void setNumero(String n) { this.numero = n; }
     public void setCAP(String c)    { this.cap = c; }
     public void setProv(String p)   { this.prov = p; }
-    /* metodi di classe */
-    public String[] getAddress() {
-        String[] s = new String[5];
-        s[0] = this.città;
-        s[1] = this.via;
-        s[2] = this.numero;
-        s[3] = this.cap;
-        s[4] = this.prov;
-        return s;
-    }
     /* attributi */
     private String città;
     private String via;

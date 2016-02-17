@@ -108,14 +108,6 @@ public class AdminPanel extends JFrame {
                 redrawFlightAction();
             }
         });
-        detailButton = new JButton("Dettagli su una rotta/volo");
-        detailButton.setAlignmentX(CENTER_ALIGNMENT);
-        detailButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                redrawDetailAction();
-            }
-        });
         cancelButton.setAlignmentX(CENTER_ALIGNMENT);
         cancelButton.addActionListener(new ActionListener() {
             @Override
@@ -126,7 +118,6 @@ public class AdminPanel extends JFrame {
         //</editor-fold>
         centralPanel.add(routeButton);
         centralPanel.add(flightButton);
-        centralPanel.add(detailButton);
         centralPanel.add(new JPanel());
         centralPanel.add(cancelButton);
         content.add(imagePanel,BorderLayout.NORTH);
@@ -256,9 +247,6 @@ public class AdminPanel extends JFrame {
         this.pack();
         
     }
-    private void redrawDetailAction() {
-        centralPanel.removeAll();
-    }
     private void cancelAction(int i) {
         if(i==1) {
             centralPanel.removeAll();
@@ -320,7 +308,6 @@ public class AdminPanel extends JFrame {
         private JLabel infoLabel3;
         private JButton routeButton;
         private JButton flightButton;
-        private JButton detailButton;
         private JButton confirmButton;
         private JButton confirmButton1;
         private final JButton cancelButton = new JButton("Annulla");
