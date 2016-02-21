@@ -609,8 +609,11 @@ public class BookPanel extends JFrame {
                 prenotazione.put("animale",animalBox.isSelected());
                 prenotazione.put("bagaglio",luggageBox.isSelected());
                 prenotazione.put("riviste",magazineBox.isSelected()); 
-                prenotazione.put("prezzo",priceLabel.getText());        
-                prenotazione.put("sconto",discountTextField.getText());         //prenotazione contiene 9 objects
+                prenotazione.put("prezzo",priceLabel.getText());      
+                if(discountTextField.getText().equals("Sconto %"))
+                    prenotazione.put("sconto","0");
+                else
+                    prenotazione.put("sconto",discountTextField.getText());         //prenotazione contiene 9 objects
                 bookButtonAction(persona,prenotazione);
             }
         });
@@ -709,7 +712,6 @@ public class BookPanel extends JFrame {
     private void bookButtonAction(HashMap persona, HashMap prenotazione) {
         try {
             new BookControl(persona,prenotazione);
-            this.dispose();
         } catch (SQLException e) {
             new MessageFrame(e.getMessage(), 0);
         }

@@ -26,7 +26,7 @@ public class AddControl {
             }
             else 
                 r.createFromDB(id);
-                throw new IllegalArgumentException("La tratta è già presente nel DB con ID " + i);
+                new MessageFrame("La tratta è già presente nel DB con ID " + i,0);
         } catch (SQLException | IllegalArgumentException e) {
             new MessageFrame(e.getMessage(),0);
         }
@@ -40,11 +40,13 @@ public class AddControl {
             f.setRoute(r);
             int i = r.getIdFromDB();
             if(i==0)
-                throw new IllegalArgumentException("Errore, la tratta "+dep+"-"+des+" non è presente nel DB. È necessario aggiungerla.");
-            f.setSeats(169);
-            f.setDate(d);
-            f.store();
-            new MessageFrame("Volo " + dep + "-" + des + " aggiunto per il giorno " + dat + ".",1);
+                new MessageFrame("Errore, la tratta "+dep+"-"+des+" non è presente nel DB. È necessario aggiungerla.",0);
+            else {
+                f.setSeats(169);
+                f.setDate(d);
+                f.store();
+                new MessageFrame("Volo " + dep + "-" + des + " aggiunto per il giorno " + dat + ".",1);                
+            }
         } catch (SQLException | IllegalArgumentException e) {
             new MessageFrame(e.getMessage(),0);
         }

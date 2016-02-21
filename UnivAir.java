@@ -10,7 +10,6 @@ import univair.Presentation.HomePanel;
 public class UnivAir {
 
     public static void main(String[] args) {
-        
-            HomePanel f = new HomePanel();
+        HomePanel f = new HomePanel();
     }    
 }

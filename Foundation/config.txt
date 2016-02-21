@@ -1,0 +1,14 @@
+//localhost
+localhost
+//port
+5432
+//database
+UnivAir
+//DB username
+postgres
+//DB password
+admin
+//admin username
+adminname
+//admin password
+adminpass

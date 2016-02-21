@@ -25,11 +25,13 @@ public class SearchControl {
             GregorianCalendar gc = getDateFromString(dat);
             GregorianCalendar now = new GregorianCalendar();
             if(gc.before(now)) {
-                throw new IllegalArgumentException("Selezionare una data adatta");
+                new MessageFrame("Selezionare una data adatta",0);
             }
-            int id = r.getIdFromDB();
-            ArrayList list = Flight.getFlightsRouteDate(id, dat);
-            new ResultPanel(list,r,dat);
+            else {
+                int id = r.getIdFromDB();
+                ArrayList list = Flight.getFlightsRouteDate(id, dat);
+                new ResultPanel(list,r,dat);
+            }
         } catch (IllegalArgumentException | SQLException e) {
             new MessageFrame(e.getMessage(), 0);
         }

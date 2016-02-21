@@ -27,6 +27,7 @@ public class Utility {
     /**
      * Il metodo getStringFromDate converte una data in una stringa formattata 
      * secondo il pattern yyyy-mm-dd.
+     * @param ddn Il GregorianCalendar da convertire in stringa
      * @return una stringa "traduzione" della data.
      */
     public static String getStringFromDate(GregorianCalendar ddn) {
